@@ -1,5 +1,5 @@
 % =========================================================================
-% gas_mole_fract 
+% gasmolfract
 % -------------------------------------------------------------------------
 % mole fraction in dry atmosphere of a well mixed atmospheric gas
 % From Glueckauf 195X
@@ -24,7 +24,7 @@
 % -------------------------------------------------------------------------
 % USAGE:
 % -------------------------------------------------------------------------
-% X = gas_mol_fract('Ar')
+% X = gasmolfract('Ar')
 % X = 0.00934
 %
 % written by Roo Nicholson 08/03/08
@@ -32,7 +32,7 @@
 % =========================================================================
 
 
-function [Xg] = gas_mole_fract(gas)
+function [Xg] = gasmolfract(gas)
 if strcmpi(gas, 'He')
     Xg = 0.000524;
 elseif strcmpi(gas, 'Ne')

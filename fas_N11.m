@@ -45,7 +45,7 @@
 % Deq: steady-state supersaturation
 % REFERENCE:---------------------------------------------------------------
 %
-% Nicholson, D., S. Emerson, S. Khatiwala, R. C. Hamme. (in press) 
+% Nicholson, D., S. Emerson, S. Khatiwala, R. C. Hamme. (2011)
 %   An inverse approach to estimate bubble-mediated air-sea gas flux from 
 %   inert gas measurements.  Proceedings on the 6th International Symposium
 %   on Gas Transfer at Water Surfaces.  Kyoto University Press.
