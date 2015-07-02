@@ -1,13 +1,14 @@
-function [ outvar,units,fname] = oc2obs(lat,lon,t,var,varargin)
-% nearestModis
+function [ outvar,units,fname] = oc_2obs(lat,lon,t,var,varargin)
+% oc_2obs
 % -------------------------------------------------------------------------
-% extracts MODISA observations nearest to inputted lat/lon/t vectors
+% extracts NASA L3smi ocean color observations nearest to inputted lat/lon/t 
+% from netCDFs in NASA ocean color opendap server
 % link - http://oceandata.sci.gsfc.nasa.gov/opendap/
 % -------------------------------------------------------------------------
 % USAGE:
 % -------------------------------------------------------------------------
-% [PAR] = oc2obs(lat,lon,t,'par')
-%
+% [PAR] = oc_2obs(lat,lon,t,'par');
+% [PAR,units,fnames] = oc_2obs(lat,lon,t,'par','res','4km','sensor','VIIRS');
 % -------------------------------------------------------------------------
 % INPUTS:
 % -------------------------------------------------------------------------
@@ -15,7 +16,7 @@ function [ outvar,units,fname] = oc2obs(lat,lon,t,var,varargin)
 % lon:      vector of observed longitudes (between [-180 and +360]
 % t:        datetime or datenum time input - vector or scalar
 % var:      string of input variable
-% varargin: optional variables passed through to ocFileString.m
+% varargin: optional variables passed through to oc_url.m
 % 
 % -------------------------------------------------------------------------
 % OUTPUTS:
@@ -30,7 +31,7 @@ function [ outvar,units,fname] = oc2obs(lat,lon,t,var,varargin)
 % -------------------------------------------------------------------------
 % ALSO SEE: 
 % -------------------------------------------------------------------------
-% ocFileString.m
+% oc_url.m
 %
 % -------------------------------------------------------------------------
 % ABOUT: David Nicholson // dnicholson@whoi.edu // 29 JUN 2015
@@ -51,7 +52,7 @@ if length(lon) ~= nobs || length(t) ~= nobs
 end
 
 % construct OPENDAP address string for first file
-fname = ocFileString(t(1),var,varargin{:});
+fname = oc_url(t(1),var,varargin{:});
 
 units = ncreadatt(fname,var,'units');
 m = ncreadatt(fname,var,'scale_factor');
@@ -65,7 +66,7 @@ fname = cell(nobs,1);
 for ii = 1:nobs
     [~,ilat] = min(abs(lat(ii) - latv));
     [~,ilon] = min(abs(lon(ii) - lonv));
-    fname{ii} = ocFileString(t(ii),var,varargin{:});
+    fname{ii} = oc_url(t(ii),var,varargin{:});
     v = ncread(fname{ii},var,[ilon,ilat],[1,1]);
     outvar(ii) = m.*v + b;
     latout(ii) = latv(ilat);

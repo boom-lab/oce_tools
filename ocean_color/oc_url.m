@@ -1,4 +1,4 @@
-function [ fname ] = ocFileString(t,var,varargin)
+function [ fname ] = oc_url(t,var,varargin)
 % ocFileString
 % -------------------------------------------------------------------------
 % construncts netCDF filename for NASA Ocean Color OpenDAP server
@@ -92,7 +92,7 @@ switch var
         suite = 'PIC';
     case 'poc'
         suite = 'POC';
-    case strcmpni(var,'RRS_',4)
+    case strncmpi(var,'RRS_',4)
         suite = 'RRS';
     case 'sst4'
         suite = 'SST4';
@@ -125,13 +125,10 @@ dtm = dateshift(dtm,'start','second','nearest');
 % adjust time to nearest date with available data
 sCode = sensor2code(sensor);
 switch trange
-    case '8D'
+    case {'8D','R32'}
         % round to 8th days (1,9,17,25,....)
         t1 = dtm-rem(day(dtm,'dayofyear'),8) + 1;
         tStr = [sCode,dstr(t1),dstr(t1+7)];
-    case 'R32'
-        t1 = dtm-rem(day(dtm,'dayofyear'),32) + 1;
-        tStr = [sCode,dstr(t1),dstr(t1+31)];
     case 'DAY'
         t1 = dtm;
         tStr = [sCode,dstr(dtm)];
