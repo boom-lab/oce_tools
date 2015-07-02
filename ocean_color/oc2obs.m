@@ -1,4 +1,4 @@
-function [ outvar,units,fname] = nearestModis(lat,lon,t,var,varargin)
+function [ outvar,units,fname] = oc2obs(lat,lon,t,var,varargin)
 % nearestModis
 % -------------------------------------------------------------------------
 % extracts MODISA observations nearest to inputted lat/lon/t vectors
@@ -6,7 +6,7 @@ function [ outvar,units,fname] = nearestModis(lat,lon,t,var,varargin)
 % -------------------------------------------------------------------------
 % USAGE:
 % -------------------------------------------------------------------------
-% [PAR] = nearestModis(lat,lon,t,'par')
+% [PAR] = oc2obs(lat,lon,t,'par')
 %
 % -------------------------------------------------------------------------
 % INPUTS:
@@ -15,6 +15,7 @@ function [ outvar,units,fname] = nearestModis(lat,lon,t,var,varargin)
 % lon:      vector of observed longitudes (between [-180 and +360]
 % t:        datetime or datenum time input - vector or scalar
 % var:      string of input variable
+% varargin: optional variables passed through to ocFileString.m
 % 
 % -------------------------------------------------------------------------
 % OUTPUTS:
@@ -22,6 +23,8 @@ function [ outvar,units,fname] = nearestModis(lat,lon,t,var,varargin)
 % outvar:   vector of requested data
 % units:    string with units for outvar
 % fname:    opendap addresses for files that were accesed
+% lonout:   vector of longitudes corresponding to matched NASA grid cell
+% latout:   vector of latitudes corresponding to matched NASA grid cell
 %
 %
 % -------------------------------------------------------------------------
@@ -65,6 +68,8 @@ for ii = 1:nobs
     fname{ii} = ocFileString(t(ii),var,varargin{:});
     v = ncread(fname{ii},var,[ilon,ilat],[1,1]);
     outvar(ii) = m.*v + b;
+    latout(ii) = latv(ilat);
+    lonout(ii) = latv(ilon);
 end
 
 
