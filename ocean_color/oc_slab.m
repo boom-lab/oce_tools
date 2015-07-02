@@ -1,4 +1,4 @@
-function [slab, lonout,latout] = oc_slab( latRng,lonRng,t,varName,varargin )
+function [slab, lonout,latout] = oc_slab( lonRng,latRng,t,varName,varargin )
 % oc_slab
 % -------------------------------------------------------------------------
 % extracts a hyperslab of ocean color data from NASA ocean color opendap
@@ -11,13 +11,13 @@ function [slab, lonout,latout] = oc_slab( latRng,lonRng,t,varName,varargin )
 % latr = [20 40];
 % lonr = [170 220];
 % t = datetime(2015,5,30);
-% [PAR] = oc_slab(latr,lonr,t,'par');
-% [PAR,lonout,latout] = oc_slab(latr,lonr,t,'par','sensor','VIIRS');
+% [PAR] = oc_slab(onr,latr,lt,'par');
+% [PAR,lonout,latout] = oc_slab(lonr,latr,t,'par','sensor','VIIRS');
 % -------------------------------------------------------------------------
 % INPUTS:
 % -------------------------------------------------------------------------
-% lat:      vector of observed latitudes
-% lon:      vector of observed longitudes (between [-180 and +360]
+% lon:      vector of observed longitudes [westedge --> eastedge]
+% lat:      vector of observed latitudes 
 % t:        datetime or datenum time input - vector or scalar
 % var:      string of input variable
 % varargin: optional variables passed through to ocFileString.m
