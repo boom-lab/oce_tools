@@ -128,7 +128,11 @@ switch trange
     case {'8D','R32'}
         % round to 8th days (1,9,17,25,....)
         t1 = dtm-rem(day(dtm,'dayofyear'),8) + 1;
-        tStr = [sCode,dstr(t1),dstr(t1+7)];
+        if strcmpi(trange,'8D')
+            tStr = [sCode,dstr(t1),dstr(t1+7)];
+        else
+            tStr = [sCode,dstr(t1),dstr(t1+31)];
+        end
     case 'DAY'
         t1 = dtm;
         tStr = [sCode,dstr(dtm)];

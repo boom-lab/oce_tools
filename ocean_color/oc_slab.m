@@ -58,17 +58,17 @@ if strcmp(varName,'nsst')
     varName = 'sst';
 end
 
-ilat = find(lat > latRng(1) & lat <= latRng(2));
+ilat = find(lat >= latRng(1) & lat <= latRng(2));
 latout = lat(ilat);
 nlat = length(ilat);
 if isSplit
-    ilon1 = find(lon > lonRng1(1) & lon <= lonRng1(2));
+    ilon1 = find(lon >= lonRng1(1) & lon <= lonRng1(2));
     nlon1 = length(ilon1);
-    ilon2 = find(lon > lonRng2(1) & lon <= lonRng2(2));
+    ilon2 = find(lon >= lonRng2(1) & lon <= lonRng2(2));
     nlon2 = length(ilon2);
     lonout = lon([ilon1;ilon2]);   
 else
-    ilon = find(lon > lonRng(1) & lon <= lonRng(2));
+    ilon = find(lon >= lonRng(1) & lon <= lonRng(2));
     lonout = lon(ilon);
 end
 nlon = length(lonout);
