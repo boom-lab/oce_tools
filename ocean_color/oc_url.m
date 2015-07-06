@@ -1,14 +1,14 @@
 function [ fname ] = oc_url(t,var,varargin)
-% ocFileString
+% oc_url
 % -------------------------------------------------------------------------
 % construncts netCDF filename for NASA Ocean Color OpenDAP server
 % link - http://oceandata.sci.gsfc.nasa.gov/opendap/
 % -------------------------------------------------------------------------
 % USAGE:
 % -------------------------------------------------------------------------
-% [fname] = ocFileString(t,'par')
+% [fname] = oc_url(t,'par')
 % 
-% [fname] = ocFileString(t,'par','sensor','VIIRS','trange','DAY','res','4km')
+% [fname] = oc_url(t,'par','sensor','VIIRS','trange','DAY','res','4km')
 %
 % -------------------------------------------------------------------------
 % INPUTS:
