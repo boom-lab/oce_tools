@@ -1,4 +1,4 @@
-function [slab, lonout,latout] = oc_slab( lonRng,latRng,t,varName,varargin )
+function [slab, lonout,latout,t] = oc_slab( lonRng,latRng,t,varName,varargin )
 % oc_slab
 % -------------------------------------------------------------------------
 % extracts a hyperslab of ocean color data from NASA ocean color opendap
@@ -76,7 +76,7 @@ nlon = length(lonout);
 slab = nan(nlon,nlat,nt);
 
 for ii = 1:length(t)
-    [url] = oc_url(t(1),varName,varargin{:});
+    [url] = oc_url(t(ii),varName,varargin{:});
     if isSplit
         slab(1:nlon1,:,ii) = ncread(url,varName,[ilon1(1),ilat(1)],...
             [nlon1,nlat]);
