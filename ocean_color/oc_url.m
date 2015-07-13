@@ -35,9 +35,6 @@ function [ fname ] = oc_url(t,var,varargin)
 
 froot = 'http://oceandata.sci.gsfc.nasa.gov/opendap';
 %% parse inputs
-
-%%% parse input parameters
-p = inputParser;
 defaultLevel = 'L3SMI';
 expectedLevel = {'L3SMI'};
 defaultSensor = 'MODISA';
@@ -46,15 +43,19 @@ defaultTrange = '8D';
 expectedTrange = {'8D','R32','DAY','MO','YR'};
 defaultRes = '9km';
 expectedRes = {'4km','9km'};
-
-addRequired(p,'t',@(x) isnumeric(x) || isdatetime(x));
-addRequired(p,'var',@isstr);
-
-addParameter(p,'trange',defaultTrange,@(x) any(validatestring(x,expectedTrange)));
-addParameter(p,'res',defaultRes,@(x) any(validatestring(x,expectedRes)));
-addParameter(p,'sensor',defaultSensor,@(x) any(validatestring(x,expectedSensor)));
-addParameter(p,'level',defaultLevel,@(x) any(validatestring(x,expectedLevel)));
-
+%%% parse input parameters
+persistent p
+if isempty(p)
+    p = inputParser;
+    
+    addRequired(p,'t',@(x) isnumeric(x) || isdatetime(x));
+    addRequired(p,'var',@isstr);
+    
+    addParameter(p,'trange',defaultTrange,@(x) any(validatestring(x,expectedTrange)));
+    addParameter(p,'res',defaultRes,@(x) any(validatestring(x,expectedRes)));
+    addParameter(p,'sensor',defaultSensor,@(x) any(validatestring(x,expectedSensor)));
+    addParameter(p,'level',defaultLevel,@(x) any(validatestring(x,expectedLevel)));
+end
 parse(p,t,var,varargin{:});
 inputs = p.Results;
 

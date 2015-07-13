@@ -1,4 +1,4 @@
-function [ slab,lon,lat,z,t] = hy_slab(lonRng,latRng,zRng,tRng,varName)
+function [ slab,lon,lat,z,t] = hy_slab(latRng,lonRng,zRng,tRng,varName)
 
 % hy_url
 % -------------------------------------------------------------------------
@@ -7,7 +7,7 @@ function [ slab,lon,lat,z,t] = hy_slab(lonRng,latRng,zRng,tRng,varName)
 % -------------------------------------------------------------------------
 % USAGE:
 % -------------------------------------------------------------------------
-% [ssh, lonh, lath] = hy_slab(lonrng,latrng,NaN,[t,t],'surf_el');
+% [ssh, lonh, lath] = hy_slab(latrng,lonrng,NaN,[t,t],'surf_el');
 %
 % -------------------------------------------------------------------------
 % INPUTS:
@@ -91,6 +91,12 @@ hyt1 = ncread(url1,'time');
 % hycom time is hours since 01 JAN 2000
 hydtm1 = datetime(2000,1,1,hyt1,0,0);
 it1 = find(hydtm1 <= tRng(2) & hydtm1 >= tRng(1));
+if isempty(it1)
+    [mint,it1] = min(abs(hydtm1-tRng(1)));
+    if mint > 3
+        error('no data found within 3 days')
+    end
+end
 nt1 = length(it1);
 if ~strcmp(url1,url2)
     istSplit = 1;
@@ -111,6 +117,7 @@ end
 
 % convert lons to -180 to 180 range
 lonRng = mod(lonRng,360);
+hylon = mod(hylon,360);
 if lonRng(1) > lonRng(2)
     isLonSplit = 1;
     ilon1 = find(hylon >= lonRng(1));

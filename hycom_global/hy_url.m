@@ -52,7 +52,7 @@ if dtm(1) < datetime(2012,05,01)
     config = 'GLBa0.08';
 elseif dtm(1) < datetime(2013,08,01)
     expt = 'expt_90.9';
-elseif dtm(1) < datetime(2014,04,01)
+elseif dtm(1) < datetime(2014,04,07)
     expt = 'expt_91.0';
 else
     expt = 'expt_91.1';
