@@ -1,4 +1,4 @@
-function [ slab,lon,lat,z,t] = hy_slab(latRng,lonRng,zRng,tRng,varName)
+function [ slab,lat,lon,z,t] = hy_slab(latRng,lonRng,zRng,tRng,varName)
 
 % hy_url
 % -------------------------------------------------------------------------
@@ -7,7 +7,7 @@ function [ slab,lon,lat,z,t] = hy_slab(latRng,lonRng,zRng,tRng,varName)
 % -------------------------------------------------------------------------
 % USAGE:
 % -------------------------------------------------------------------------
-% [ssh, lonh, lath] = hy_slab(latrng,lonrng,NaN,[t,t],'surf_el');
+% [ssh, lath, lonh] = hy_slab(latrng,lonrng,NaN,[t,t],'surf_el');
 %
 % -------------------------------------------------------------------------
 % INPUTS:
@@ -31,7 +31,7 @@ function [ slab,lon,lat,z,t] = hy_slab(latRng,lonRng,zRng,tRng,varName)
 %%% parse input parameters
 p = inputParser;
 
-expectedVarName = {'surf_el','water_u','water_v','water_t','salinity'};
+expectedVarName = {'surf_el','water_u','water_v','water_temp','salinity'};
 
 defaultSensor = 'MODISA';
 expectedSensor = {'MODISA','MODIST','VIIRS','SeaWiFS','Aquarius'};
@@ -161,7 +161,7 @@ if isSSH
         end
     end
 else
-    % preallocate slab
+    % preallocate slab - will permute it at the end
     slab = nan(nlon,nlat,nz,nt);
     if isLonSplit
         % both lon and t are split
@@ -190,6 +190,7 @@ else
         end
     end
 end
-    
+% switch lat and lon
+slab = permute(slab,[2,1,3]);
 end
 

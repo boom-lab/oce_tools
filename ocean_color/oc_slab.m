@@ -1,4 +1,4 @@
-function [slab, lonout,latout,t] = oc_slab( latRng,lonRng,t,varName,varargin )
+function [slab, latout, lonout,t] = oc_slab( latRng,lonRng,t,varName,varargin )
 % oc_slab
 % -------------------------------------------------------------------------
 % extracts a hyperslab of ocean color data from NASA ocean color opendap
@@ -12,7 +12,7 @@ function [slab, lonout,latout,t] = oc_slab( latRng,lonRng,t,varName,varargin )
 % lonr = [170 220];
 % t = datetime(2015,5,30);
 % [PAR] = oc_slab(latr,lonr,lt,'par');
-% [PAR,lonout,latout] = oc_slab(latr,lonr,t,'par','sensor','VIIRS');
+% [PAR,latout,lonmamaout] = oc_slab(latr,lonr,t,'par','sensor','VIIRS');
 % -------------------------------------------------------------------------
 % INPUTS:
 % -------------------------------------------------------------------------
@@ -25,7 +25,7 @@ function [slab, lonout,latout,t] = oc_slab( latRng,lonRng,t,varName,varargin )
 % -------------------------------------------------------------------------
 % OUTPUTS:
 % -------------------------------------------------------------------------
-% slab:     requested data: dims = [lon, lat, t]
+% slab:     requested data: dims = [lat, lon, t]
 % lonout:   vector of longitudes corresponding to output slab
 % latout:   vector of latitudes corresponding to output slab
 %
@@ -73,18 +73,19 @@ else
 end
 nlon = length(lonout);
 
-slab = nan(nlon,nlat,nt);
+slab = nan(nlat,nlon,nt);
 
 for ii = 1:length(t)
     [url] = oc_url(t(ii),varName,varargin{:});
+    % all ncread outputs need to be transposed b/c they return lon by lat
     if isSplit
-        slab(1:nlon1,:,ii) = ncread(url,varName,[ilon1(1),ilat(1)],...
-            [nlon1,nlat]);
-        slab(nlon1+1:end,:,ii) = ncread(url,varName,[1,ilat(1)],...
-            [nlon2,nlat]);
+        slab(:,1:nlon1,ii) = ncread(url,varName,[ilon1(1),ilat(1)],...
+            [nlon1,nlat])';
+        slab(:,nlon1+1:end,ii) = ncread(url,varName,[1,ilat(1)],...
+            [nlon2,nlat])';
     else
         slab(:,:,ii) = ncread(url,varName,[ilon(1),ilat(1)],...
-            [nlon,nlat]);
+            [nlon,nlat])';
     end
 end
         
