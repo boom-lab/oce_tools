@@ -115,7 +115,7 @@ else
     t = hydtm1(it1);
 end
 
-% convert lons to -180 to 180 range
+% lon is on 0 to 360 scale
 lonRng = mod(lonRng,360);
 hylon = mod(hylon,360);
 if lonRng(1) > lonRng(2)
@@ -160,6 +160,7 @@ if isSSH
             slab = ncread(url,varName,[ilon(1),ilat(1),it(1)],[nlon,nlat,nt]);
         end
     end
+    permute(slab,[2,1,3]);
 else
     % preallocate slab - will permute it at the end
     slab = nan(nlon,nlat,nz,nt);
@@ -191,6 +192,6 @@ else
     end
 end
 % switch lat and lon
-slab = permute(slab,[2,1,3]);
+slab = permute(slab,[2,1,3,4]);
 end
 

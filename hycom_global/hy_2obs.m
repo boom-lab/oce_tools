@@ -1,22 +1,20 @@
-function [ outvar,units,fname,latout,lonout] = oc_2obs(lat,lon,t,var,varargin)
-% oc_2obs
+function [ outvar,latout,lonout,tout,zout] = hy_2obs(lat,lon,z,t,var,varargin)
+% hy_2obs
 % -------------------------------------------------------------------------
-% extracts NASA L3smi ocean color observations nearest to inputted lat/lon/t 
-% from netCDFs in NASA ocean color opendap server
-% link - http://oceandata.sci.gsfc.nasa.gov/opendap/
+% extracts HYCOM model output nearest to inputted lat/lon/t/z vectors
+% 
 % -------------------------------------------------------------------------
 % USAGE:
 % -------------------------------------------------------------------------
-% [PAR] = oc_2obs(lat,lon,t,'par');
-% [PAR,units,fnames] = oc_2obs(lat,lon,t,'par','res','4km','sensor','VIIRS');
+% [ssh] = hy_2obs(lat,lon,t,'surface_el');
 % -------------------------------------------------------------------------
 % INPUTS:
 % -------------------------------------------------------------------------
 % lat:      vector of observed latitudes
-% lon:      vector of observed longitudes (between [-180 and +360]
+% lon:      vector of observed longitudes (between [-180 and +360])
 % t:        datetime or datenum time input - vector or scalar
 % var:      string of input variable
-% varargin: optional variables passed through to oc_url.m
+% varargin: optional variables passed through to hy_url.m
 % 
 % -------------------------------------------------------------------------
 % OUTPUTS:
@@ -31,58 +29,71 @@ function [ outvar,units,fname,latout,lonout] = oc_2obs(lat,lon,t,var,varargin)
 % -------------------------------------------------------------------------
 % ALSO SEE: 
 % -------------------------------------------------------------------------
-% oc_url.m
+% hy_url.m
+% hy_slab.m
 %
 % -------------------------------------------------------------------------
 % ABOUT: David Nicholson // dnicholson@whoi.edu // 29 JUN 2015
 % -------------------------------------------------------------------------
 
-% clean up lon, t and construct full filename      
-% MODISA used -180:180 longitude range
-lon(lon > 180) = lon(lon > 180) - 360;
-
 nobs = length(lat);
-
 % check if t is scalar and resize to match lat and lon
 if length(t) == 1
     t = repmat(t,nobs,1);
 end
+if length(z) == 1
+    z = repmat(z,nobs,1);
+end
+if ~isdatetime(t)
+    dtm = datetime(t, 'ConvertFrom', 'datenum');
+else
+    dtm = t;
+end
+dtm = dateshift(dtm,'start','day');
+
 if length(lon) ~= nobs || length(t) ~= nobs
     error('lat,lon and t must be the same length or scalar');
 end
 
-% construct OPENDAP address string for first file
-fname = oc_url(t(1),var,varargin{:});
+lon = mod(lon,360);
+% clean up lon, t and construct full filename      
 
-units = ncreadatt(fname,var,'units');
-m = ncreadatt(fname,var,'scale_factor');
-b = ncreadatt(fname,var,'add_offset');
-latv = ncread(fname,'lat');
-lonv = ncread(fname,'lon');
+latrng = [floor(min(lat)) ceil(max(lat))];
+% 0 - 360 range
+lonrng1 = [floor(min(lon)) ceil(max(lon))];
+lon2 = lon;
+lon2(lon > 180) = lon(lon > 180) - 360;
+lonrng2 = [floor(min(lon2)) ceil(max(lon2))];
+if diff(lonrng1) < diff(lonrng2)
+    % within 0 - 360 range
+    lonrng = lonrng1;
+else
+    % wrap around prime meridian
+    lonrng = flip(lonrng1);
+end
+trng = [min(dtm) max(dtm)];
+zrng = [floor(min(z)) ceil(max(z))];
+
+[slab,latHy,lonHy,zHy,tHy] = hy_slab(latrng,lonrng,zrng,trng,var);
+
 
 %% Initialize output and get nearest datapoint to each obs point
-outvar = nan(nobs,1);
-latout = outvar;
-lonout = outvar;
-fname = cell(nobs,1);
-lastFname = '';
+NV = nan(nobs,1);
+outvar = NV;
+latout = NV;
+lonout = NV;
+tout = datetime(NV,'ConvertFrom','datenum');
+zout = NV;
 for ii = 1:nobs
-    [~,ilat] = min(abs(lat(ii) - latv));
-    [~,ilon] = min(abs(lon(ii) - lonv));
-    fname{ii} = oc_url(t(ii),var,varargin{:});
-    try
-        if ~strcmpi(fname{ii},lastFname)
-            v = ncread(fname{ii},var,[ilon,ilat],[1,1]);
-        end
-        outvar(ii) = v;
-    catch
-        disp(['error accessing' fname{ii}]);
-        outvar(ii) = NaN;
-        continue
-    end
-    latout(ii) = latv(ilat);
-    lonout(ii) = latv(ilon);
-    lastFname = fname{ii};
+    [~,ilat] = min(abs(lat(ii) - latHy));
+    [~,ilon] = min(abs(lon(ii) - lonHy));
+    [~,it] = min(abs(tHy-dtm(ii)));
+    [~,iz] = min(abs(zHy-z(ii)));
+    outvar(ii) = slab(ilat,ilon,it,iz);
+    latout(ii) = latHy(ilat);
+    lonout(ii) = lonHy(ilon);
+    tout(ii) = tHy(it);
+    zout(ii) = zHy(iz);
 end
 
 

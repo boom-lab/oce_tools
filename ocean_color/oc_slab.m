@@ -11,7 +11,7 @@ function [slab, latout, lonout,t] = oc_slab( latRng,lonRng,t,varName,varargin )
 % latr = [20 40];
 % lonr = [170 220];
 % t = datetime(2015,5,30);
-% [PAR] = oc_slab(latr,lonr,lt,'par');
+% [PAR] = oc_slab(latr,lonr,t,'par');
 % [PAR,latout,lonmamaout] = oc_slab(latr,lonr,t,'par','sensor','VIIRS');
 % -------------------------------------------------------------------------
 % INPUTS:

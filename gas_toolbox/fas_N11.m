@@ -56,9 +56,15 @@
 % Version: September 2014
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [Fas, Finj, Fex, Deq] = fas_N11(C,u10,S,T,slp,gas)
+function [Fas, Finj, Fex, Deq, k] = fas_N11(C,u10,S,T,slp,gas,varargin)
 
-
+if nargin > 6
+    rhum = varargin{1};
+else
+    rhum = 1;
+end
+ph2oveq = vpress(S,T);
+ph2ov = rhum.*ph2oveq;
 Ainj = 2.357e-9;
 Aex = 1.848e-5;
 
@@ -69,7 +75,7 @@ u3(u3 < 0) = 0;
 Geq = gasmoleq(S,T,gas);
 
 k = kgas(u10,Sc,'Sw07');
-Fas = -k.*(C-slp.*Geq);
+Fas = k.*(Geq.*(slp-ph2ov)./(1-ph2oveq)-C);
 Finj = Ainj.*slp.*gas_mole_fract(gas).*u3;
 Fex = Aex.*slp.*Geq.*D.^0.5.*u3;
 Deq = ((Finj+Fex)./k)./Geq;
