@@ -1,89 +1,82 @@
 % =========================================================================
-% [sol] = gasmoleq(S,T,gas)
-%
-% GASMOLEQ.M - calculates equilibrium solubility of a dissolved gas
-% in mol/m^3 at an absolute pressure of 101325 Pa (sea pressure of 0 
-% dbar) including saturated water vapor. 
-%
-% This is a wrapper function. See individual solubility functions for more
-% details.
+% X = gas_mole_fract(gas) 
+% -------------------------------------------------------------------------
+% mole fraction in dry atmosphere of a well mixed atmospheric gas
 %
 % -------------------------------------------------------------------------
 % INPUTS:
 % -------------------------------------------------------------------------
-% SP        Practical salinity [PSS-78]
-% pt        Potential temperature [degC]
-% gas       gas string: He, Ne, Ar, Kr, Xe, O2 or N2
+% gas:      name of the gas (see below)
+%
+% Helium:       'He'
+% Neon:         'Ne'
+% Argon:        'Ar'
+% Krypton:      'Kr'
+% Xenon:        'Xe'
+% Nitrogen:     'N2'
+% Oxygen:       'O2'
+% Argon-36:     'Ar36'
 %
 % -------------------------------------------------------------------------
 % OUTPUTS:
 % -------------------------------------------------------------------------
-% sol       gas equilibrium solubility in mol/m^3
+% Xg        mole fraction of the gas in dry atmosphere (mixing ratio)
 %
 % -------------------------------------------------------------------------
 % USAGE:
 % -------------------------------------------------------------------------
-% [O2eq]    = gasmoleq_SP_pt(35,20,'O2')
-% O2eq      = 0.2311
+% Xg = gas_mol_fract('Ar')
+% Xg = 0.009332
 %
 % -------------------------------------------------------------------------
-% REFERENCES:
+% REFERENCE:
 % -------------------------------------------------------------------------
-%  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
-%   seawater - 2010: Calculation and use of thermodynamic properties.  
-%   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
-%   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
-%
-%  See also the references within each solubility function.
+% Tables of Physical & Chemical Constants. 3.1.4. Composition of the
+% Earth's Atmosphere. Kaye & Laby Online. Version 2.0 (16 October 2012)
+% www.kayelaby.npl.co.uk and references therein.
 %
 % -------------------------------------------------------------------------
 % AUTHORS:
 % -------------------------------------------------------------------------
-% Cara Manning, cmanning@whoi.edu
-% David Nicholson, dnicholson@whoi.edu
+% Written by David (Roo) Nicholson 08/03/08  dnicholson@whoi.edu
+% Updated by Cara Manning to change some mole fractions, September 2015
 %
 % -------------------------------------------------------------------------
-% LICENSE:
+% COPYRIGHT:
 % -------------------------------------------------------------------------
-% Copyright 2015 Cara Manning and David Nicholson 
+% Copyright 2015 David Nicholson and Cara Manning 
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
 % you may not use this file except in compliance with the License.
 % You may obtain a copy of the License at
 %
 %    http://www.apache.org/licenses/LICENSE-2.0
-% 
+%
 % Unless required by applicable law or agreed to in writing, software
 % distributed under the License is distributed on an "AS IS" BASIS,
 % WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 % See the License for the specific language governing permissions and
 % limitations under the License.
-%
 % =========================================================================
 
-function [sol] = gasmoleq(S,T,gas)
+function [Xg] = gas_mole_fract(gas)
 
-% Calculate potential density referenced to 0 dbar
-rho = sw_dens(S,T,0);
-
-% calculate equilibrium solubility gas concentration in micro-mol/kg
 if strcmpi(gas, 'He')
-    gasmolsol = gsw_Hesol_SP_pt(S,T);
+    Xg = 0.00000524;
 elseif strcmpi(gas, 'Ne')
-    gasmolsol = gsw_Nesol_SP_pt(S,T);
+    Xg = 0.00001818;
 elseif strcmpi(gas, 'Ar')
-    gasmolsol = gsw_Arsol_SP_pt(S,T);
+    Xg = 0.009332;
 elseif strcmpi(gas, 'Kr')
-    gasmolsol = gsw_Krsol_SP_pt(S,T);
+    Xg = 0.00000114;
 elseif strcmpi(gas, 'Xe')
-    gasmolsol = hammeXesol(S,T);
+    Xg = 87e-8;
 elseif strcmpi(gas, 'N2')
-    gasmolsol = gsw_N2sol_SP_pt(S,T);
+    Xg = 0.78082;
+elseif strcmpi(gas, 'Ar36')
+    Xg = 0.009332.*0.003651267;
 elseif strcmpi(gas, 'O2')
-    gasmolsol = gsw_O2sol_SP_pt(S,T);
+    Xg = 0.20945;
 else
-    error('Gas name must be He, Ne, Ar, Kr, Xe, O2 or N2');
+    error('Gas name must be Ne, Ar, Kr, Xe, N2, O2 or Ar36');
 end
-
-% convert from micro-mol/kg to mol/m3
-sol = rho.*gasmolsol./1e6;
