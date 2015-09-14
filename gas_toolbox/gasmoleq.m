@@ -10,9 +10,9 @@
 % -------------------------------------------------------------------------
 % INPUTS:
 % -------------------------------------------------------------------------
-% S         Salinity
-% T         Temperature
-% gas       gas string: He, Ne, Ar, Kr, Xe, O2 or N2
+% SP        Practical Salinity
+% pt        Potential temperature
+% gas       gas string: He, Ne, Ar, Kr, Xe, O2, N2 or N2O
 %
 % -------------------------------------------------------------------------
 % OUTPUTS:
@@ -26,37 +26,33 @@
 % O2eq = 0.2311
 %
 % Author: David Nicholson dnicholson@whoi.edu
-% Also see: gas_mol_fract.m, gasmolsol.m
+% Also see: gasmolfract.m, gasmolsol.m
 % =========================================================================
 
-function [sol] = gasmoleq(S,T,gas)
+function [sol] = gasmoleq(SP,pt,gas)
 
-rho = gsw_sigma0(S,T)+1000;
+SA = SP.*35.16504./35;
+CT = gsw_CT_from_pt(SA,pt);
+rho = gsw_sigma0(SA,CT)+1000;
 if strcmpi(gas, 'He')
-    gasmolsol = Hesol(S,T);
+    gasmolsol = gsw_Hesol_SP_pt(SP,pt);
 elseif strcmpi(gas, 'Ne')
-    gasmolsol = Nesol(S,T);
+    gasmolsol = gsw_Nesol_SP_pt(SP,pt);
 elseif strcmpi(gas, 'Ar')
-    gasmolsol = Arsol(S,T);
+    gasmolsol = gsw_Arsol_SP_pt(SP,pt);
 elseif strcmpi(gas, 'Ar36')
-    gasmolsol = Ar36sol(S,T);   
+    gasmolsol = Ar36sol(SP,pt);   
 elseif strcmpi(gas, 'Kr')
-    gasmolsol = Krsol(S,T);
+    gasmolsol = gsw_Krsol_SP_pt(SP,pt);
 elseif strcmpi(gas, 'Xe')
-    gasmolsol = Xesol(S,T);
+    gasmolsol = Xesol(SP,pt);
 elseif strcmpi(gas, 'N2')
-    gasmolsol = N2sol(S,T);
+    gasmolsol = gsw_N2sol_SP_pt(SP,pt);
 elseif strcmpi(gas, 'O2')
-    gasmolsol = O2sol(S,T);
-elseif strcmpi(gas, 'O17')
-    gasmolsol = O2sol(S,T);
-%elseif strcmpi(gas, 'O18')
-%    gasmolsol = O2sol(S,T);
-%elseif strcmpi(gas, 'O36')
-%    gasmolsol = O2sol(S,T);
-%elseif strcmpi(gas, 'O35')
-%    gasmolsol = O2sol(S,T);
+    gasmolsol = gsw_O2sol_SP_pt(SP,pt);
+elseif strcmpi(gas, 'N2O')
+    gasmolsol = gsw_N2Osol_SP_pt(SP,pt);
 else
-    error('Gas name must be He, Ne, Ar, Kr, Xe, O2 or N2');
+    error('Gas name must be He, Ne, Ar, Kr, Xe, O2, N2O or N2');
 end
 sol = rho.*gasmolsol./1e6;

@@ -2,7 +2,13 @@
 % gasmolfract
 % -------------------------------------------------------------------------
 % mole fraction in dry atmosphere of a well mixed atmospheric gas
-% From Glueckauf 195X
+% 
+% Noble gases (excluding Ar) from Glueckauf 1951
+%
+% N2, Ar, O2 are from Table 1 in:
+% Picard, A., Davis, R. S., Gläser, M., & Fujii, K. (2008). Revised formula 
+%   for the density of moist air (CIPM-2007). Metrologia, 45(2), 149.
+%   doi:10.1088/0026-1394/45/2/004
 %
 % -------------------------------------------------------------------------
 % INPUTS:
@@ -16,15 +22,19 @@
 % Nitrogen:     'N2'
 % Oxygen:       'O2'
 %
+% optional input:
+% pCO2      pCO2 in uatm (or ppm)  This is used to calculate dilution due
+%           to addded CO2 - assumes xCO2 + xO2 are a constant
 % -------------------------------------------------------------------------
 % OUTPUTS:
 % -------------------------------------------------------------------------
-% Xg        mole fraction of the gas in dry atm (mixing ratio)
+% Xg        volumetric mixing of the gas in dry atm (mixing ratio)
+%           equivelant to mol/mol if you assume gases are ideal
 %
 % -------------------------------------------------------------------------
 % USAGE:
 % -------------------------------------------------------------------------
-% X = gasmolfract('Ar')
+% X = gasmolefract('Ar')
 % X = 0.00934
 %
 % written by Roo Nicholson 08/03/08
@@ -32,23 +42,31 @@
 % =========================================================================
 
 
-function [Xg] = gasmolfract(gas)
+function [Xg] = gasmolefract(gas,varargin)
+
+if nargin == 2
+    pCO2 = 1e-6.*varargin{1};
+elseif nargin == 1
+    pCO2 = 1e-6.*400;
+end
+
+% these values are appropriate for pCO2 = 400 uatm
 if strcmpi(gas, 'He')
     Xg = 0.000524;
 elseif strcmpi(gas, 'Ne')
     Xg = 0.00001818;
 elseif strcmpi(gas, 'Ar')
-    Xg = 0.00934;
+    Xg = 0.009332;
 elseif strcmpi(gas, 'Kr')
     Xg = 0.00000114;
 elseif strcmpi(gas, 'Xe')
-    Xg = 9e-8;%error('no data for Xe')
+    Xg = 8.7e-8;
 elseif strcmpi(gas, 'N2')
-    Xg = 0.780840;
+    Xg = 0.780848;
 elseif strcmpi(gas, 'Ar36')
-    Xg = 0.00934.*0.003651267;
+    Xg = 0.009332.*0.003651267;
 elseif strcmpi(gas, 'O2')
-    Xg = 0.209460;
+    Xg = 0.209790-pCO2;
 else
     error('Gas name must be He, Ne, Ar, Kr, Xe, N2, O2 or Ar36');
 end
