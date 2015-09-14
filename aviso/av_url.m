@@ -1,4 +1,4 @@
-function [ url ] = av_url( t,varname,varargin )
+function [ url ] = av_url(t,varn,varargin )
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 % av_url
@@ -8,9 +8,9 @@ function [ url ] = av_url( t,varname,varargin )
 % -------------------------------------------------------------------------
 % USAGE:
 % -------------------------------------------------------------------------
-% [url] = hy_url(t,'surf_el')
+% [url] = av_url(t,'surf_el')
 % 
-% [url] = hy_url(datetime(2015,7,1),'surf_el')
+% [url] = av_url(datetime(2015,7,1),'surf_el')
 %
 % -------------------------------------------------------------------------
 % INPUTS:
@@ -26,41 +26,81 @@ function [ url ] = av_url( t,varname,varargin )
 % url:  full opendap/thredds address of requested file
 %
 % -------------------------------------------------------------------------
-% ABOUT:  David Nicholson // dnicholson@whoi.edu // 01 JUL 2015
+% ABOUT:  David Nicholson // dnicholson@whoi.edu // 01 SEP 2015
 % -------------------------------------------------------------------------
+defaultDT = 'dt';
+expectedDT = {'dt','nrt'};
+defaultSat = 'allsat';
+expectedSat = {'allsat','twosat'};
+
+validVar = {'msla','madt','u','v','uv','uwind','vwind','mwind','mswh'};
 
 
-threddsroot = 'http://aviso-users:grid2010@opendap.aviso.altimetry.fr/thredds/dodsC/dataset';
+%%% parse input parameters
+persistent p
+if isempty(p)
+    p = inputParser;
+    
+    addRequired(p,'t',@(x) isnumeric(x) || isdatetime(x));
+    addRequired(p,'varname',@(x) any(validatestring(x,validVar)));
+    
+    addParameter(p,'delayMode',defaultDT,@(x) any(validatestring(x,expectedDT)));
+    addParameter(p,'sat',defaultSat,@(x) any(validatestring(x,expectedSat)));
+    
 
+end
+parse(p,t,varn,varargin{:});
+inputs = p.Results;
 
-areastr = 'global';
+% OPENDAP root directory for sensor and level
+t = inputs.t;
+varn = inputs.varname;
+dt = inputs.delayMode;
+sat = inputs.sat;
 
-url = [threddsroot timestr areastr satstr varstr
-http://opendap.aviso.altimetry.fr/thredds/dodsC/dataset-duacs-nrt-over30d-global-allsat-madt-h
-http://opendap.aviso.altimetry.fr/thredds/dodsC/dataset-nrt-global-merged-mwind
-http://opendap.aviso.altimetry.fr/thredds/dodsC/dataset-nrt-global-merged-mswh
-http://opendap.aviso.altimetry.fr/thredds/dodsC/dataset-duacs-dt-global-allsat-madt-h
-http://opendap.aviso.altimetry.fr/thredds/dodsC/dataset-duacs-dt-global-allsat-madt-uv
-http://opendap.aviso.altimetry.fr/thredds/dodsC/dataset-duacs-dt-global-twosat-madt-h
-http://opendap.aviso.oceanobs.com/thredds/dodsC/dataset-duacs-dt-global-allsat-msla-uv
+uname = 'aviso-users';
+pswd = 'grid2010';
+threddsroot = 'opendap.aviso.oceanobs.com/thredds/dodsC/dataset';
 
+%'http://aviso-users:grid2010@opendap.aviso.oceanobs.com/thredds/dodsC/dataset-duacs-dt-global-allsat-msla-h';
+areaStr = 'global';
+duacsStr = 'duacs-';
+switch varn
+    case {'u','v','uv'}
+        varstr = 'msla-uv';
+     case {'uwind','vwind','mwind'}
+        varstr = 'mwind';
+        duacsStr = [];
+        sat = 'merged';
+    case 'mswh'
+        varstr = 'merged-mswh';
+        duacsStr = [];
+    case {'msla','sla'}
+        varstr = 'msla-h';
+end
 
-config = 'GLBu0.08';
+url = ['http://' uname ':' pswd '@' threddsroot '-' duacsStr dt '-' areaStr '-' sat '-' varstr];
+% http://opendap.aviso.altimetry.fr/thredds/dodsC/dataset-duacs-nrt-over30d-global-allsat-madt-h
+% http://opendap.aviso.altimetry.fr/thredds/dodsC/dataset-nrt-global-merged-mwind
+% http://opendap.aviso.altimetry.fr/thredds/dodsC/dataset-nrt-global-merged-mswh
+% http://opendap.aviso.altimetry.fr/thredds/dodsC/dataset-duacs-dt-global-allsat-madt-h
+% http://opendap.aviso.altimetry.fr/thredds/dodsC/dataset-duacs-dt-global-allsat-madt-uv
+% http://opendap.aviso.altimetry.fr/thredds/dodsC/dataset-duacs-dt-global-twosat-madt-h
+% http://opendap.aviso.oceanobs.com/thredds/dodsC/dataset-duacs-dt-global-allsat-msla-uv
+
 
 % time in datetime - dateshift ensures there are not artifacts from
 % numerical rounding errors in conversion from datenum
-if ~isdatetime(t)
-    dtm = datetime(t, 'ConvertFrom', 'datenum');
-else
-    dtm = t;
-end
-dtm = dateshift(dtm,'start','second','nearest');
+% if ~isdatetime(t)
+%     dtm = datetime(t, 'ConvertFrom', 'datenum');
+% else
+%     dtm = t;
+% end
+% dtm = dateshift(dtm,'start','second','nearest');
 
 
 
 
-
-dataset-duacs-dt-global-allsat-msla-h';
 
 end
 
