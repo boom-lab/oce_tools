@@ -1,5 +1,5 @@
 % =========================================================================
-% [sol] = gasmoleq(S,T,gas)
+% [sol] = gasmoleq(SP,pt,gas)
 %
 % GASMOLEQ.M - calculates equilibrium solubility of a dissolved gas
 % in mol/m^3 at an absolute pressure of 101325 Pa (sea pressure of 0 
@@ -7,6 +7,12 @@
 %
 % This is a wrapper function. See individual solubility functions for more
 % details.
+%
+% -------------------------------------------------------------------------
+% USAGE:
+% -------------------------------------------------------------------------
+% [O2eq]    = gasmoleq(35,20,'O2')
+% O2eq      = 0.2311
 %
 % -------------------------------------------------------------------------
 % INPUTS:
@@ -19,12 +25,6 @@
 % OUTPUTS:
 % -------------------------------------------------------------------------
 % sol       gas equilibrium solubility in mol/m^3
-%
-% -------------------------------------------------------------------------
-% USAGE:
-% -------------------------------------------------------------------------
-% [O2eq]    = gasmoleq_SP_pt(35,20,'O2')
-% O2eq      = 0.2311
 %
 % -------------------------------------------------------------------------
 % REFERENCES:
@@ -61,7 +61,7 @@
 %
 % =========================================================================
 
-function [sol] = gasmoleq(S,T,gas)
+function [sol] = gasmoleq(SP,pt,gas)
 
 % Calculate potential density at surface
 SA = SP.*35.16504./35;
@@ -70,19 +70,19 @@ rho = gsw_sigma0(SA,CT)+1000;
 
 % calculate equilibrium solubility gas concentration in micro-mol/kg
 if strcmpi(gas, 'He')
-    sol_umolkg = gsw_Hesol_SP_pt(S,T);
+    sol_umolkg = gsw_Hesol_SP_pt(SP,pt);
 elseif strcmpi(gas, 'Ne')
-    sol_umolkg = gsw_Nesol_SP_pt(S,T);
+    sol_umolkg = gsw_Nesol_SP_pt(SP,pt);
 elseif strcmpi(gas, 'Ar')
-    sol_umolkg = gsw_Arsol_SP_pt(S,T);
+    sol_umolkg = gsw_Arsol_SP_pt(SP,pt);
 elseif strcmpi(gas, 'Kr')
-    sol_umolkg = gsw_Krsol_SP_pt(S,T);
+    sol_umolkg = gsw_Krsol_SP_pt(SP,pt);
 elseif strcmpi(gas, 'Xe')
-    sol_umolkg = hammeXesol(S,T);
+    sol_umolkg = Xesol(SP,pt);
 elseif strcmpi(gas, 'N2')
-    sol_umolkg = gsw_N2sol_SP_pt(S,T);
+    sol_umolkg = gsw_N2sol_SP_pt(SP,pt);
 elseif strcmpi(gas, 'O2')
-    sol_umolkg = gsw_O2sol_SP_pt(S,T);
+    sol_umolkg = gsw_O2sol_SP_pt(SP,pt);
 else
     error('Gas name must be He, Ne, Ar, Kr, Xe, O2 or N2');
 end

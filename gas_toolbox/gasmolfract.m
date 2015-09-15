@@ -3,7 +3,9 @@
 % -------------------------------------------------------------------------
 % mole fraction in dry atmosphere of a well mixed atmospheric gas
 % 
-% Noble gases (excluding Ar) from Glueckauf 1951
+% Noble gases (excluding Ar) from:
+% Glueckauf, E. (1951). The composition of atmospheric air. Compendium of
+% Meteorology. 3-10.
 %
 % N2, Ar, O2 are from Table 1 in:
 % Picard, A., Davis, R. S., Gläser, M., & Fujii, K. (2008). Revised formula 
@@ -14,7 +16,7 @@
 % INPUTS:
 % -------------------------------------------------------------------------
 % gas:      name of the gas (see below)
-%
+% Helium:       'He'
 % Neon:         'Ne'
 % Argon:        'Ar'
 % Krypton:      'Kr'
@@ -29,20 +31,20 @@
 % OUTPUTS:
 % -------------------------------------------------------------------------
 % Xg        volumetric mixing of the gas in dry atm (mixing ratio)
-%           equivelant to mol/mol if you assume gases are ideal
+%           equivalent to mol/mol if you assume gases are ideal
 %
 % -------------------------------------------------------------------------
 % USAGE:
 % -------------------------------------------------------------------------
-% X = gasmolefract('Ar')
-% X = 0.00934
+% X = gasmolfract('Ar')
+% X = 0.009332
 %
 % written by Roo Nicholson 08/03/08
 % Also see: gasmoleq.m, gasmolsol.m
 % =========================================================================
 
 
-function [Xg] = gasmolefract(gas,varargin)
+function [Xg] = gasmolfract(gas,varargin)
 
 if nargin == 2
     pCO2 = 1e-6.*varargin{1};

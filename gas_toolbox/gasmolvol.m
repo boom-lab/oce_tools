@@ -1,8 +1,11 @@
-% VMOL.M - Function giving molar volumes at standard temperature and
+% GASMOLVOL.M - Function giving molar volumes at standard temperature and
 % pressure (STP), which is defined as 273.15 K, 1 atm of the pure gas
 %
 % USAGE:-------------------------------------------------------------------
-% vmol = gas_molar_volume(gas)
+% vmol = gasmolvol(gas)
+%
+% INPUT:-------------------------------------------------------------------
+% gas       gas string: He, Ne, Ar, Kr, Xe, O2, or N2
 %
 % REFERENCE:---------------------------------------------------------------
 % Dymond, J. H., Marsh, K. N., Wilhoit, R. C., & Wong, K. C. (2002). Virial
@@ -10,8 +13,12 @@
 % and Functional Relationships in Science and Technology New Series Group
 % IV. Physical Chemistry Vol, 21.
 %
-%
-function vmol = gas_mol_vol(gas)
+% AUTHOR:------------------------------------------------------------------
+% David Nicholson dnicholson@whoi.edu
+% Woods Hole Oceanographic Institution
+%==========================================================================
+
+function vmol = gasmolvol(gas)
 if strcmpi(gas,'He')
     vmol = 22.426;
 elseif strcmpi(gas,'Ne')
