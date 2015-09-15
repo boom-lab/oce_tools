@@ -83,21 +83,23 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [Fd, Fc, Fp, Deq] = fas_N11(C,u10,S,T,slp,gas,rh)
+function [Fd, Fc, Fp, Deq] = fas_N11(C,u10,S,T,slp,gas,varargin)
 
 Ainj = 2.357e-9;
 Aex = 1.848e-5;
 
 % if humidity is not provided, set to 0.8 for all values
-if nargin == 6
-    rh =0.8.*ones(size(C));
-end;
+if nargin > 6
+    rhum = varargin{1};
+else
+    rhum = 0.8;
+end
 
 % Equilibrium gas conc is referenced to 1 atm total air pressure, 
 % including saturated water vapor (rh=1).
 % Calculate ratio (observed dry air pressure)/(reference dry air pressure).
 ph2oveq = vpress(S,T);
-ph2ov = rh.*ph2oveq;
+ph2ov = rhum.*ph2oveq;
 slpc = (slp-ph2ov)./(1-ph2oveq);
 
 [D,Sc] = gasmoldiff(S,T,gas);
@@ -109,6 +111,6 @@ u3(u3 < 0) = 0;
 
 k = kgas(u10,Sc,'Sw07');
 Fd = -k.*(C-slpc.*Geq);
-Fc = Ainj.*slpc.*gas_mole_fract(gas).*u3;
+Fc = Ainj.*slpc.*gasmolefract(gas).*u3;
 Fp = Aex.*slpc.*Geq.*D.^0.5.*u3;
 Deq = ((Fd+Fc)./k)./Geq;

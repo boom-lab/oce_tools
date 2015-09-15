@@ -122,7 +122,7 @@ R = 8.314;  % units: m3 Pa K-1 mol-1
 % -------------------------------------------------------------------------
 % Calculate gas physical properties
 % -------------------------------------------------------------------------
-xG = gas_mole_fract(gas);
+xG = gasmolefract(gas);
 Geq = gasmoleq(S,T,gas);
 alc = (Geq/atm2Pa).*R.*(T+273.15);
 
