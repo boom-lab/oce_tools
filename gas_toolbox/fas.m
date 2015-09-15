@@ -75,27 +75,29 @@
 %
 % =========================================================================
 
-function [Fd, Fc, Fp, Deq] = fas(C,u10,S,T,slp,gas,param,rh)
+function [Fd, Fc, Fp, Deq] = fas(C,u10,S,T,slp,gas,param,varargin)
 
 % if humidity is not provided, set to 0.8 for all values
-if nargin == 6
+
+if nargin == 8
+    rh = varargin{1};
+else
     rh =0.8.*ones(size(C));
-end;
+end
+    
 
-paramList = {'S09','N11','Sw07','L13'};
-
-if ismember(upper(param),upper(paramList))
-    if strcmpi(param,'S09')
-            [Fd, Fc, Fp, Deq] = fas_S09(C,u10,S,T,slp,gas,rh);
-    elseif strcmpi(param,'N11')
-            [Fd, Fc, Fp, Deq] = fas_N11(C,u10,S,T,slp,gas,rh);
-    elseif strcmpi(param,'Sw07')
+switch upper(param)
+    case 'S09'
+        [Fd, Fc, Fp, Deq] = fas_S09(C,u10,S,T,slp,gas,rh);
+    case 'N11'
+        [Fd, Fc, Fp, Deq] = fas_N11(C,u10,S,T,slp,gas,rh);
+    case 'SW07'
         [Fd, Fc, Fp, Deq] = fas_Sw07(C,u10,S,T,slp,gas,rh);
-    elseif strcmpi(param,'L13')
+    case 'L13'
         [Fd, Fp, Fc, Deq] = fas_L13(C,u10,S,T,slp,gas,rh);
-    else
-        error('parameterization not found');
-    end  
-end;
+    otherwise
+        error('only S09,N11,Sw07 and L13 are supported');
+end
+
 
 end

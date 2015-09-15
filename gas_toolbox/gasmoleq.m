@@ -63,27 +63,29 @@
 
 function [sol] = gasmoleq(S,T,gas)
 
-% Calculate potential density referenced to 0 dbar
-rho = sw_dens(S,T,0);
+% Calculate potential density at surface
+SA = SP.*35.16504./35;
+CT = gsw_CT_from_pt(SA,pt);
+rho = gsw_sigma0(SA,CT)+1000;
 
 % calculate equilibrium solubility gas concentration in micro-mol/kg
 if strcmpi(gas, 'He')
-    gasmolsol = gsw_Hesol_SP_pt(S,T);
+    sol_umolkg = gsw_Hesol_SP_pt(S,T);
 elseif strcmpi(gas, 'Ne')
-    gasmolsol = gsw_Nesol_SP_pt(S,T);
+    sol_umolkg = gsw_Nesol_SP_pt(S,T);
 elseif strcmpi(gas, 'Ar')
-    gasmolsol = gsw_Arsol_SP_pt(S,T);
+    sol_umolkg = gsw_Arsol_SP_pt(S,T);
 elseif strcmpi(gas, 'Kr')
-    gasmolsol = gsw_Krsol_SP_pt(S,T);
+    sol_umolkg = gsw_Krsol_SP_pt(S,T);
 elseif strcmpi(gas, 'Xe')
-    gasmolsol = hammeXesol(S,T);
+    sol_umolkg = hammeXesol(S,T);
 elseif strcmpi(gas, 'N2')
-    gasmolsol = gsw_N2sol_SP_pt(S,T);
+    sol_umolkg = gsw_N2sol_SP_pt(S,T);
 elseif strcmpi(gas, 'O2')
-    gasmolsol = gsw_O2sol_SP_pt(S,T);
+    sol_umolkg = gsw_O2sol_SP_pt(S,T);
 else
     error('Gas name must be He, Ne, Ar, Kr, Xe, O2 or N2');
 end
 
 % convert from micro-mol/kg to mol/m3
-sol = rho.*gasmolsol./1e6;
+sol = rho.*sol_umolkg./1e6;

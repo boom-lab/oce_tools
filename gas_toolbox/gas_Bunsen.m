@@ -1,8 +1,8 @@
-% beta = gas_Bunsen(S,T,gas)
+% beta = gas_Bunsen(SP,pt,gas)
 % Function to calculate Bunsen coefficient
 %
 % USAGE:-------------------------------------------------------------------
-% beta=gas_Bunsen(S,T,gas)
+% beta=gas_Bunsen(SP,pt,gas)
 %
 % DESCRIPTION:-------------------------------------------------------------
 % Calculate the Bunsen coefficient, which is defined as the volume of pure
@@ -11,8 +11,8 @@
 % pressure of 1 atm of the gas. The Bunsen coefficient is unitless
 %
 % INPUTS:------------------------------------------------------------------
-% S:    Practical salinity (PSS)
-% T:    Potential temperature (deg C)
+% SP:    Practical salinity (PSS)
+% pt:    Potential temperature (deg C)
 % gas:  code for gas (He, Ne, Ar, Kr, Xe, N2, or O2)
 %
 % OUTPUTS:-----------------------------------------------------------------
@@ -44,31 +44,17 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function beta=gas_Bunsen(S,T,gas)
+function beta=gas_Bunsen(SP,pt,gas)
 
-% calculate potential density referenced to 0 dbar
-rho = sw_dens(S,T,0);
-pdry = 1 - vpress(S,T); % pressure of dry air for 1 atm total pressure
+% calculate potential density referenced to surface
+SA = SP.*35.16504./35;
+CT = gsw_CT_from_pt(SA,pt);
+rho = gsw_sigma0(SA,CT)+1000;
+pdry = 1 - vpress(SP,pt); % pressure of dry air for 1 atm total pressure
 
-% calc equilibrium conc in mol/kg
-if strcmpi(gas,'He')
-    Geq=gsw_Hesol_SP_pt(S,T)./1E6;
-elseif strcmpi(gas,'Ne')
-    Geq=gsw_Nesol_SP_pt(S,T)./1E6;
-elseif strcmpi(gas,'Ar')
-    Geq=gsw_Arsol_SP_pt(S,T)./1E6;
-elseif strcmpi(gas,'Kr')
-    Geq=gsw_Krsol_SP_pt(S,T)./1E6;
-elseif strcmpi(gas,'Xe')
-    Geq=hammeXesol(S,T)./1E6;
-elseif strcmpi(gas,'N2')
-    Geq=gsw_N2sol_SP_pt(S,T)./1E6;
-elseif strcmpi(gas,'O2')
-    Geq=gsw_O2sol_SP_pt(S,T)./1E6;  
-else
-    error('Gas name must be He, Ne, Ar, Kr, Xe, O2 or N2');
-end;
+% equilib solubility in mol kg-1
+Geq = 1e-6.*gasmoleq(SP,pt,gas);
 
 % calc beta
-beta = Geq.*gas_mol_vol(gas).*(rho./1000).*pdry./gas_mol_fract(gas);
+beta = gas_mol_vol(gas).*(rho./1000).*Geq./(pdry.*gasmolfract(gas));
 end
