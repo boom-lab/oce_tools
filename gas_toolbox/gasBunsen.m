@@ -1,14 +1,14 @@
-% beta = gas_Bunsen(SP,pt,gas)
+% beta = gasBunsen(SP,pt,gas)
 % Function to calculate Bunsen coefficient
 %
 % USAGE:-------------------------------------------------------------------
-% beta=gas_Bunsen(SP,pt,gas)
+% beta=gasBunsen(SP,pt,gas)
 %
 % DESCRIPTION:-------------------------------------------------------------
-% Calculate the Bunsen coefficient, which is defined as the volume of pure
-% gas at standard temperature and pressure (273.15 K, 1 atm) that will
+% Calculate the Bunsen coefficient, which is defined as the volume of pure,
+% dry gas at standard temperature and pressure (273.15 K, 1 atm) that will
 % dissolve into a volume of water at equilibrium exposed to a partial
-% pressure of 1 atm of the gas. The Bunsen coefficient is unitless
+% pressure of 1 atm of the gas. The Bunsen coefficient is unitless.
 %
 % INPUTS:------------------------------------------------------------------
 % SP:    Practical salinity (PSS)
@@ -22,8 +22,9 @@
 %
 % See references for individual gas solubility functions.
 %
-% AUTHOR:------------------------------------------------------------------
+% AUTHORS:-----------------------------------------------------------------
 % Cara Manning (cmanning@whoi.edu) Woods Hole Oceanographic Institution
+% David Nicholson (dnicholson@whoi.edu)
 % Version: 1.0 // September 2015
 %
 % COPYRIGHT:---------------------------------------------------------------
@@ -44,17 +45,17 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function beta=gas_Bunsen(SP,pt,gas)
+function beta=gasBunsen(SP,pt,gas)
 
 % calculate potential density referenced to surface
 SA = SP.*35.16504./35;
 CT = gsw_CT_from_pt(SA,pt);
 rho = gsw_sigma0(SA,CT)+1000;
-pdry = 1 - vpress(SP,pt); % pressure of dry air for 1 atm total pressure
+pwet = 1 + vpress(SP,pt); % pressure of dry air for 1 atm total pressure
 
 % equilib solubility in mol kg-1
 Geq = 1e-6.*gasmoleq(SP,pt,gas);
 
-% calc beta
-beta = gas_mol_vol(gas).*(rho./1000).*Geq./(pdry.*gasmolfract(gas));
+% calc beta 
+beta = Geq.*gasmolvol(gas).*(rho./1000).*pwet./gasmolfract(gas);
 end
