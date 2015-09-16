@@ -47,15 +47,11 @@
 
 function beta=gasBunsen(SP,pt,gas)
 
-% calculate potential density referenced to surface
-SA = SP.*35.16504./35;
-CT = gsw_CT_from_pt(SA,pt);
-rho = gsw_sigma0(SA,CT)+1000;
 pdry = 1 - vpress(SP,pt); % pressure of dry air for 1 atm total pressure
 
-% equilib solubility in mol kg-1
-Geq = 1e-6.*gasmoleq(SP,pt,gas);
+% equilib solubility in mol/m3
+Geq = gasmoleq(SP,pt,gas);
 
 % calc beta 
-beta = Geq.*gasmolvol(gas).*(rho./1000)./(pdry.*gasmolfract(gas));
+beta = Geq.*(gasmolvol(gas)./1000)./(pdry.*gasmolfract(gas));
 end
