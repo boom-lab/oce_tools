@@ -5,10 +5,11 @@
 %  
 % [Fd, Fc, Fp, Deq] = fas_N11(C,u10,S,T,slp,gas,rh)
 % [Fd, Fc, Fp, Deq] = fas_N11(0.01410,5,35,10,1,'Ar',0.9)
-%   > Fd = -4.4859e-09
-%   > Fc = 4.4807e-10
-%   > Fp = 2.1927e-10
-%   > Deq = 0.002780
+%
+% > Fd = -4.486069685655351e-09
+% > Fc = 3.181027132161180e-10
+% > Fp = 9.098010870742955e-11
+% > Deq = -0.017360859936404
 %
 % DESCRIPTION:-------------------------------------------------------------
 %
@@ -85,8 +86,10 @@
 
 function [Fd, Fc, Fp, Deq] = fas_N11(C,u10,S,T,slp,gas,varargin)
 
-Ainj = 2.357e-9;
-Aex = 1.848e-5;
+% 1.5 factor converts from average winds to instantaneous - see N11 ref.
+Ainj = 2.51e-9./1.5;
+Aex = 1.15e-5./1.5;
+
 
 % if humidity is not provided, set to 0.8 for all values
 if nargin > 6
@@ -111,6 +114,6 @@ u3(u3 < 0) = 0;
 
 k = kgas(u10,Sc,'Sw07');
 Fd = -k.*(C-slpc.*Geq);
-Fc = Ainj.*slpc.*gasmolefract(gas).*u3;
+Fc = Ainj.*slpc.*gasmolfract(gas).*u3;
 Fp = Aex.*slpc.*Geq.*D.^0.5.*u3;
 Deq = ((Fd+Fc)./k)./Geq;

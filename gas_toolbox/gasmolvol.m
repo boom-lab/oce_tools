@@ -20,7 +20,6 @@
 % Woods Hole Oceanographic Institution
 %==========================================================================
 
->>>>>>> origin/cara-gtws:gas_toolbox/gasmolvol.m
 function vmol = gasmolvol(gas)
 if strcmpi(gas,'He')
     vmol = 22.426;
