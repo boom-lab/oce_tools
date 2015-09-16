@@ -11,7 +11,7 @@
 % IV. Physical Chemistry Vol, 21.
 %
 %
-function vmol = gas_mol_vol(gas)
+function vmol = gasmolvol(gas)
 if strcmpi(gas,'He')
     vmol = 22.426;
 elseif strcmpi(gas,'Ne')
@@ -26,6 +26,9 @@ elseif strcmpi(gas,'O2')
     vmol = 22.392;
 elseif strcmpi(gas,'N2')
     vmol = 22.404;
+elseif strcmpi(gas,'CO2')
+    % from http://cdiac.ornl.gov/ftp/cdiac74/sop24.pdf
+    vmol = 22.414.*0.99498
 else
     error('Gas name must be Ne, Ar, Kr, Xe, N2, or O2');
 end               
