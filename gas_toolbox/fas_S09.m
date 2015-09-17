@@ -4,7 +4,7 @@
 %
 % USAGE:-------------------------------------------------------------------
 % [Fd, Fc, Fp, Deq] = fas_S09(C,u10,S,T,slp,gas,rh)
-% [Fd, Fc, Fp, Deq] = fas_N11(0.01410,5,35,10,1,'Ar',0.9)
+% [Fd, Fc, Fp, Deq] = fas_S09(0.01410,5,35,10,1,'Ar',0.9)
 %   > Fd = -4.9960e-09
 %   > Fc = 7.3493e-10
 %   > Fp = 1.8653e-13
@@ -118,7 +118,7 @@ wfact(wfact<0) = 0;
 % calculate dry atmospheric pressure in atm
 patmdry=slp-ph2ov; % pressure of dry air in atm 
 
-ai=gas_mole_fract(gas).*wfact.*patmdry*atm2Pa/(R*(273.15+T));
+ai=gasmolfract(gas).*wfact.*patmdry*atm2Pa/(R*(273.15+T));
 Fc = Ac*ai; 
 
 
@@ -130,11 +130,11 @@ Fc = Ac*ai;
 % pressure in atm
 Zbub = 0.15*u10 - 0.55;
 Zbub(Zbub<0)=0; 
-phydro=sw_dens(S,T,0)*9.81*Zbub/atm2Pa; 
+phydro=(gsw_sigma0(S,T)+1000)*9.81*Zbub/atm2Pa; 
 
 % multiply by scaling factor Ap by beta raised to power betaexp and 
 % diffusivity raised to power diffexp
-apflux=ai.*Ap.*D.^diffexp.*(gas_Bunsen(S,T,gas).^betaexp); 
+apflux=ai.*Ap.*D.^diffexp.*(gasBunsen(S,T,gas).^betaexp); 
 Fp=apflux.*(phydro./patmdry-C./Geq+1); 
 
 

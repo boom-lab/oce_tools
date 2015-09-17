@@ -116,4 +116,4 @@ k = kgas(u10,Sc,'Sw07');
 Fd = -k.*(C-slpc.*Geq);
 Fc = Ainj.*slpc.*gasmolfract(gas).*u3;
 Fp = Aex.*slpc.*Geq.*D.^0.5.*u3;
-Deq = ((Fd+Fc)./k)./Geq;
+Deq = ((Fp+Fc)./k)./Geq;

@@ -122,7 +122,7 @@ R = 8.314;  % units: m3 Pa K-1 mol-1
 % -------------------------------------------------------------------------
 % Calculate gas physical properties
 % -------------------------------------------------------------------------
-xG = gasmolefract(gas);
+xG = gasmolfract(gas);
 Geq = gasmoleq(S,T,gas);
 alc = (Geq/atm2Pa).*R.*(T+273.15);
 
@@ -151,7 +151,9 @@ dP = 1.5244.*ustarw.^1.06;
 % Calculate air-sea fluxes
 % -------------------------------------------------------------------------
 % 
-Ks= 1./(1./(ustar./rwt./sqrt(ScW./660)+Kb)+1./(ustar./(rat.*alc)));
+%Ks= 1./(1./(ustar./rwt./sqrt(ScW./660)+Kb)+1./(ustar./(rat.*alc)));
+Ks= 1./(1./(ustar./rwt+Kb)+1./(ustar./(rat.*alc)));
+
 
 Fd = Ks.*Geq.*(pslpc-Gsat);
 Fp = Kb.*Geq.*((1+dP).*pslpc-Gsat);

@@ -72,7 +72,8 @@ rho = gsw_sigma0(SA,CT)+1000;
 if strcmpi(gas, 'He')
     sol_umolkg = gsw_Hesol_SP_pt(SP,pt);
 elseif strcmpi(gas, 'Ne')
-    sol_umolkg = gsw_Nesol_SP_pt(SP,pt);
+    % note bug in gsw_Nesol... returns nmol kg-1 instead of umol kg-1
+    sol_umolkg = gsw_Nesol_SP_pt(SP,pt)./1000;
 elseif strcmpi(gas, 'Ar')
     sol_umolkg = gsw_Arsol_SP_pt(SP,pt);
 elseif strcmpi(gas, 'Kr')

@@ -55,13 +55,13 @@ end
 % below is code used to calculate 'vSum' for pCO2 = 400 uatm
 % commmented out to avoid recomputing for every call
 
-% vN2 = gasmolefract('N2').*gasmolvol('N2');
-% vO2 = gasmolefract('O2').*gasmolvol('O2');
-% vHe = gasmolefract('He').*gasmolvol('He');
-% vNe = gasmolefract('Ne').*gasmolvol('Ne');
-% vAr = gasmolefract('Ar').*gasmolvol('Ar');
-% vKr = gasmolefract('Kr').*gasmolvol('Kr');
-% vXe = gasmolefract('Xe').*gasmolvol('Xe');
+% vN2 = gasmolfract('N2').*gasmolvol('N2');
+% vO2 = gasmolfract('O2').*gasmolvol('O2');
+% vHe = gasmolfract('He').*gasmolvol('He');
+% vNe = gasmolfract('Ne').*gasmolvol('Ne');
+% vAr = gasmolfract('Ar').*gasmolvol('Ar');
+% vKr = gasmolfract('Kr').*gasmolvol('Kr');
+% vXe = gasmolfract('Xe').*gasmolvol('Xe');
 % vCO2 = pCO2.*gasmolvol('CO2');
 % 
 % xsum = gasmolefract('N2')+gasmolefract('O2')+gasmolefract('Ar')+...
@@ -78,7 +78,7 @@ if nargin == 2
 end
 switch gas
     case {'He','Ne','Ar','Kr','Xe','N2','O2'}
-        pGdry = gasmolefract(gas).*gasmolvol(gas)./vSum;
+        pGdry = gasmolfract(gas).*gasmolvol(gas)./vSum;
     otherwise
     error('Gas name must be He, Ne, Ar, Kr, Xe, N2, O2');
 end

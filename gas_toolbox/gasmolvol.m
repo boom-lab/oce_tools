@@ -14,7 +14,6 @@
 % IV. Physical Chemistry Vol, 21.
 %
 %
-=======
 % AUTHOR:------------------------------------------------------------------
 % David Nicholson dnicholson@whoi.edu
 % Woods Hole Oceanographic Institution
@@ -37,7 +36,7 @@ elseif strcmpi(gas,'N2')
     vmol = 22.404;
 elseif strcmpi(gas,'CO2')
     % from http://cdiac.ornl.gov/ftp/cdiac74/sop24.pdf
-    vmol = 22.414.*0.99498
+    vmol = 22.414.*0.99498;
 else
     error('Gas name must be Ne, Ar, Kr, Xe, N2, or O2');
 end               
