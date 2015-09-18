@@ -5,10 +5,10 @@
 % beta=gasBunsen(SP,pt,gas)
 %
 % DESCRIPTION:-------------------------------------------------------------
-% Calculate the Bunsen coefficient, which is defined as the volume of pure,
-% dry gas at standard temperature and pressure (273.15 K, 1 atm) that will
-% dissolve into a volume of water at equilibrium exposed to a partial
-% pressure of 1 atm of the gas. The Bunsen coefficient is unitless.
+% Calculate the Bunsen coefficient, which is defined as the volume of pure
+% gas at standard temperature and pressure (0 degC, 1 atm) that will
+% dissolve into a volume of water at equilibrium when exposed to a
+% pressure of 1 atm of the gas. 
 %
 % INPUTS:------------------------------------------------------------------
 % SP:    Practical salinity (PSS)
@@ -16,7 +16,7 @@
 % gas:  code for gas (He, Ne, Ar, Kr, Xe, N2, or O2)
 %
 % OUTPUTS:-----------------------------------------------------------------
-% beta: Bunsen coefficient                  (unitless)
+% beta: Bunsen coefficient                  (L gas)/(L soln * atm gas)
 %
 % REFERENCE:---------------------------------------------------------------
 %
@@ -47,15 +47,11 @@
 
 function beta=gasBunsen(SP,pt,gas)
 
-% calculate potential density referenced to surface
-SA = SP.*35.16504./35;
-CT = gsw_CT_from_pt(SA,pt);
-rho = gsw_sigma0(SA,CT)+1000;
-pwet = 1 + vpress(SP,pt); % pressure of dry air for 1 atm total pressure
+pdry = 1 - vpress(SP,pt); % pressure of dry air for 1 atm total pressure
 
-% equilib solubility in mol kg-1
-Geq = 1e-6.*gasmoleq(SP,pt,gas);
+% equilib solubility in mol/m3
+Geq = gasmoleq(SP,pt,gas);
 
 % calc beta 
-beta = Geq.*gasmolvol(gas).*(rho./1000).*pwet./gasmolfract(gas);
+beta = Geq.*(gasmolvol(gas)./1000)./(pdry.*gasmolfract(gas));
 end

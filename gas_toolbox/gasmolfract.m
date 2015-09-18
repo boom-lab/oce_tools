@@ -54,7 +54,7 @@ end
 
 % these values are appropriate for pCO2 = 400 uatm
 if strcmpi(gas, 'He')
-    Xg = 0.000524;
+    Xg = 5.24e-6;
 elseif strcmpi(gas, 'Ne')
     Xg = 0.00001818;
 elseif strcmpi(gas, 'Ar')
