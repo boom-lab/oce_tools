@@ -6,10 +6,10 @@
 % [Fd, Fc, Fp, Deq] = fas_N11(C,u10,S,T,slp,gas,rh)
 % [Fd, Fc, Fp, Deq] = fas_N11(0.01410,5,35,10,1,'Ar',0.9)
 %
-% > Fd = -4.486069685655351e-09
-% > Fc = 3.181027132161180e-10
-% > Fp = 9.098010870742955e-11
-% > Deq = -0.017360859936404
+% > Fd = -4.4860e-09
+% > Fc = 3.1432e-10
+% > Fp = 9.0980e-11
+% > Deq = 1.6882e-03
 %
 % DESCRIPTION:-------------------------------------------------------------
 %
@@ -29,10 +29,10 @@
 % slpc is a pressure correction factor to convert from reference to
 % observed conditions. Equilibrium gas concentration in gasmoleq is
 % referenced to 1 atm total air pressure, including saturated water vapor
-% (RH=1), but observed air pressure is usually different from 1 atm, and
-% humidity in the marine boundary layer is usually less than saturation.
-% Thus, the observed atmospheric pressure of each gas will usually be
-% different from the reference.
+% (RH=1), but observed sea level pressure is usually different from 1 atm,
+% and humidity in the marine boundary layer is usually less than
+% saturation. Thus, the observed sea level pressure of each gas will
+% usually be different from the reference.
 %
 % INPUTS:------------------------------------------------------------------
 % 
@@ -105,6 +105,7 @@ end
 ph2oveq = vpress(S,T);
 ph2ov = rhum.*ph2oveq;
 slpc = (slp-ph2ov)./(1-ph2oveq);
+slpd = slp-ph2ov;
 
 [D,Sc] = gasmoldiff(S,T,gas);
 Geq = gasmoleq(S,T,gas);
@@ -115,6 +116,6 @@ u3(u3 < 0) = 0;
 
 k = kgas(u10,Sc,'Sw07');
 Fd = -k.*(C-slpc.*Geq);
-Fc = Ainj.*slpc.*gasmolfract(gas).*u3;
+Fc = Ainj.*slpd.*gasmolfract(gas).*u3;
 Fp = Aex.*slpc.*Geq.*D.^0.5.*u3;
 Deq = ((Fp+Fc)./k)./Geq;

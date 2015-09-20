@@ -17,7 +17,7 @@
 % Geophysical Research: Oceans, 114(C11), doi: 10.1029/2009JC005396
 %
 % These estimates are valid over the range of wind speeds observed at
-% Bermuda (0?13 m/s) and for open ocean, oligotrophic waters low in
+% Bermuda (0-13 m/s) and for open ocean, oligotrophic waters low in
 % surfactants. Additionally, the estimates were determined using QuikSCAT
 % winds, and if using another global wind product (e.g., NCEP reanalysis),
 % a correction for biases between the wind products may be appropriate.
@@ -28,10 +28,10 @@
 % slpc is a pressure correction factor to convert from reference to
 % observed conditions. Equilibrium gas concentration in gasmoleq is
 % referenced to 1 atm total air pressure, including saturated water vapor
-% (RH=1), but observed air pressure is usually different from 1 atm, and
-% humidity in the marine boundary layer is usually less than saturation.
-% Thus, the observed atmospheric pressure of each gas will usually be
-% different from the reference.
+% (RH=1), but observed sea level pressure is usually different from 1 atm,
+% and humidity in the marine boundary layer is usually less than
+% saturation. Thus, the observed sea level pressure of each gas will
+% usually be different from the reference.
 %
 % INPUTS:------------------------------------------------------------------
 % C:    gas concentration (mol/m^3)
