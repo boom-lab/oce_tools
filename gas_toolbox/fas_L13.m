@@ -62,16 +62,8 @@
 % Copyright 2015 David Nicholson and Cara Manning 
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
-% you may not use this file except in compliance with the License.
-% You may obtain a copy of the License at
-%
-%    http://www.apache.org/licenses/LICENSE-2.0
-%
-% Unless required by applicable law or agreed to in writing, software
-% distributed under the License is distributed on an "AS IS" BASIS,
-% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-% See the License for the specific language governing permissions and
-% limitations under the License.
+% you may not use this file except in compliance with the License, which 
+% is available at http://www.apache.org/licenses/LICENSE-2.0
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -96,9 +88,8 @@ end;
 ph2oveq = vpress(S,T);
 ph2ov = rh.*ph2oveq;
 
-% Equilibrium gas conc is referenced to 1 atm total air pressure, 
-% including saturated water vapor (rh=1).
-% Calculate ratio (observed dry air pressure)/(reference dry air pressure).
+% slpc = (observed dry air pressure)/(reference dry air pressure)
+% see Description section in header of fas_N11.m
 pslpc = (pslp - ph2ov)./(1 - ph2oveq);
 
 % -------------------------------------------------------------------------

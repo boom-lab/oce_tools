@@ -16,6 +16,23 @@
 % gas constraints on air-sea gas exchange and bubble fluxes. Journal of
 % Geophysical Research: Oceans, 114(C11), doi: 10.1029/2009JC005396
 %
+% These estimates are valid over the range of wind speeds observed at
+% Bermuda (0?13 m/s) and for open ocean, oligotrophic waters low in
+% surfactants. Additionally, the estimates were determined using QuikSCAT
+% winds, and if using another global wind product (e.g., NCEP reanalysis),
+% a correction for biases between the wind products may be appropriate.
+% Contact Rachel Stanley (rachel.stanley@wellesley.edu) with questions.
+%
+% Explanation of slpc:
+%      slpc = (observed dry air pressure)/(reference dry air pressure)
+% slpc is a pressure correction factor to convert from reference to
+% observed conditions. Equilibrium gas concentration in gasmoleq is
+% referenced to 1 atm total air pressure, including saturated water vapor
+% (RH=1), but observed air pressure is usually different from 1 atm, and
+% humidity in the marine boundary layer is usually less than saturation.
+% Thus, the observed atmospheric pressure of each gas will usually be
+% different from the reference.
+%
 % INPUTS:------------------------------------------------------------------
 % C:    gas concentration (mol/m^3)
 % u10:  10 m wind speed (m/s)
@@ -23,7 +40,8 @@
 % T:    Sea surface temperature (deg C)
 % slp:  sea level pressure (atm)
 % gas:  two letter code for gas (He, Ne, Ar, Kr, Xe, N2, or O2)
-% rh:   relative humidity as a fraction of saturation (0.5 = 50% RH).
+% rh:   relative humidity in the marine boundary layer as a fraction of
+%       saturation (0.5 = 50% RH).
 %       rh is an optional but recommended argument. If not provided, it
 %       will be automatically set to 0.8.
 %
@@ -39,26 +57,24 @@
 % gas constraints on air-sea gas exchange and bubble fluxes. Journal of
 % Geophysical Research: Oceans, 114(C11), doi: 10.1029/2009JC005396
 %
+% Bubble penetration depth parameterization:
+% Graham, A., D. K. Woolf, and A. J. Hall (2004), Aeration due to breaking
+% waves. Part I: Bubble populations, J. Phys. Oceanogr., 34(5), 989?1007,
+% doi:10.1175/1520-0485(2004)034<0989:ADTBWP>2.0.CO;2.
+%
 % AUTHOR:------------------------------------------------------------------
 %
 % Cara Manning (cmanning@whoi.edu) Woods Hole Oceanographic Institution
 % Version: 1.0 // September 2015
+% Checked and approved by Rachel Stanley on September 20, 2015.
 %
 % COPYRIGHT:---------------------------------------------------------------
 %
 % Copyright 2015 Cara Manning 
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
-% you may not use this file except in compliance with the License.
-% You may obtain a copy of the License at
-%
-%    http://www.apache.org/licenses/LICENSE-2.0
-%
-% Unless required by applicable law or agreed to in writing, software
-% distributed under the License is distributed on an "AS IS" BASIS,
-% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-% See the License for the specific language governing permissions and
-% limitations under the License.
+% you may not use this file except in compliance with the License, which 
+% is available at http://www.apache.org/licenses/LICENSE-2.0
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -96,9 +112,8 @@ Geq = gasmoleq(S,T,gas);
 
 k = gammaG*kgas(u10,Sc,'W92b'); % k_660 = 0.31 cm/hr
 
-% Equilibrium gas conc is referenced to 1 atm total air pressure, 
-% including saturated water vapor (rh=1).
-% Calculate ratio (observed dry air pressure)/(reference dry air pressure).
+% slpc = (observed dry air pressure)/(reference dry air pressure)
+% see Description section in header
 ph2oveq = vpress(S,T);
 ph2ov = rh.*ph2oveq;
 slpc = (slp-ph2ov)./(1-ph2oveq);

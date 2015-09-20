@@ -19,10 +19,20 @@
 %   inert gas measurements.  Proceedings on the 6th International Symposium
 %   on Gas Transfer at Water Surfaces.  Kyoto University Press.
 %
-% Fc = Ainj * slp * Xg * u3
-% Fp = Aex * slp * Geq * D^n * u3
+% Fc = Ainj * slpc * Xg * u3
+% Fp = Aex * slpc * Geq * D^n * u3
 %
 % where u3 = (u-2.27)^3 (and zero for  u < 2.27)
+%
+% Explanation of slpc:
+%      slpc = (observed dry air pressure)/(reference dry air pressure)
+% slpc is a pressure correction factor to convert from reference to
+% observed conditions. Equilibrium gas concentration in gasmoleq is
+% referenced to 1 atm total air pressure, including saturated water vapor
+% (RH=1), but observed air pressure is usually different from 1 atm, and
+% humidity in the marine boundary layer is usually less than saturation.
+% Thus, the observed atmospheric pressure of each gas will usually be
+% different from the reference.
 %
 % INPUTS:------------------------------------------------------------------
 % 
@@ -43,9 +53,9 @@
 %       N2      Nitrogen        Hamme and Emerson 2004   
 %       O2      Oxygen          Garcia and Gordon 1992   
 %
-% rh:   relative humidity as a fraction of saturation (0.5 = 50% RH).
-%       rh is an optional but recommended argument. If not provided, it
-%       will be automatically set to 0.8.
+% varargin: optional but recommended arguments
+%       rhum: relative humidity as a fraction of saturation (0.5 = 50% RH).
+%               If not provided, it will be automatically set to 0.8.
 %
 % OUTPUTS:-----------------------------------------------------------------
 % Fd:   Surface air-sea diffusive flux based on 
@@ -71,16 +81,8 @@
 % Copyright 2015 David Nicholson and Cara Manning 
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
-% you may not use this file except in compliance with the License.
-% You may obtain a copy of the License at
-%
-%    http://www.apache.org/licenses/LICENSE-2.0
-%
-% Unless required by applicable law or agreed to in writing, software
-% distributed under the License is distributed on an "AS IS" BASIS,
-% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-% See the License for the specific language governing permissions and
-% limitations under the License.
+% you may not use this file except in compliance with the License, which 
+% is available at http://www.apache.org/licenses/LICENSE-2.0
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -98,9 +100,8 @@ else
     rhum = 0.8;
 end
 
-% Equilibrium gas conc is referenced to 1 atm total air pressure, 
-% including saturated water vapor (rh=1).
-% Calculate ratio (observed dry air pressure)/(reference dry air pressure).
+% slpc = (observed dry air pressure)/(reference dry air pressure)
+% see Description section in header
 ph2oveq = vpress(S,T);
 ph2ov = rhum.*ph2oveq;
 slpc = (slp-ph2ov)./(1-ph2oveq);

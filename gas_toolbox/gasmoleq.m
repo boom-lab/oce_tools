@@ -8,6 +8,11 @@
 % This is a wrapper function. See individual solubility functions for more
 % details.
 %
+% This function uses the GSW Toolbox solubility functions when available,
+% except for Ne. There is a bug in gsw_Nesol_SP_pt and gsw_Nesol version
+% 3.05 (they return solubility in nmol kg-1 instead of umol kg-1), so we
+% have provided a correct function for the solubility of Ne.
+%
 % -------------------------------------------------------------------------
 % USAGE:
 % -------------------------------------------------------------------------
@@ -34,7 +39,7 @@
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %
-%  See also the references within each solubility function.
+%  See also the references within each solubility function. 
 %
 % -------------------------------------------------------------------------
 % AUTHORS:
@@ -48,16 +53,8 @@
 % Copyright 2015 Cara Manning and David Nicholson 
 %
 % Licensed under the Apache License, Version 2.0 (the "License");
-% you may not use this file except in compliance with the License.
-% You may obtain a copy of the License at
-%
-%    http://www.apache.org/licenses/LICENSE-2.0
-% 
-% Unless required by applicable law or agreed to in writing, software
-% distributed under the License is distributed on an "AS IS" BASIS,
-% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-% See the License for the specific language governing permissions and
-% limitations under the License.
+% you may not use this file except in compliance with the License, which 
+% is available at http://www.apache.org/licenses/LICENSE-2.0
 %
 % =========================================================================
 
@@ -72,8 +69,8 @@ rho = gsw_sigma0(SA,CT)+1000;
 if strcmpi(gas, 'He')
     sol_umolkg = gsw_Hesol_SP_pt(SP,pt);
 elseif strcmpi(gas, 'Ne')
-    % note bug in gsw_Nesol... returns nmol kg-1 instead of umol kg-1
-    sol_umolkg = gsw_Nesol_SP_pt(SP,pt)./1000;
+    % bug in gsw_Nesol... v. 3.05 - returns nmol kg-1 instead of umol kg-1
+    sol_umolkg = Nesol(SP,pt);
 elseif strcmpi(gas, 'Ar')
     sol_umolkg = gsw_Arsol_SP_pt(SP,pt);
 elseif strcmpi(gas, 'Kr')
