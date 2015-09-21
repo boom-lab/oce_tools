@@ -153,7 +153,7 @@ Fc = xG.*5.56.*ustarw.^3.86;
 % -------------------------------------------------------------------------
 % Calculate steady-state supersaturation
 % -------------------------------------------------------------------------
-Deq = (Kb.*Geq.*dP.*pslpc+Fc)./((Ks).*Geq.*pslpc);
+Deq = (Kb.*Geq.*dP.*pslpc+Fc)./((Kb+Ks).*Geq.*pslpc);
 
 end
 
