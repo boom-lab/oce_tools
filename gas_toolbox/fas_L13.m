@@ -19,8 +19,8 @@
 % INPUTS:------------------------------------------------------------------
 % C:    gas concentration (mol m-3)
 % u10:  10 m wind speed (m/s)
-% S:    Sea surface salinity (PSS)
-% T:    Sea surface temperature (deg C)
+% SP:    Sea surface salinity (PSS)
+% pt:    Sea surface temperature (deg C)
 % pslp: sea level pressure (atm)
 % gas:  two letter code for gas (He, Ne, Ar, Kr, Xe, N2, or O2)  
 % rh:   relative humidity as a fraction of saturation (0.5 = 50% RH)
@@ -67,7 +67,7 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [ Fd, Fp, Fc, Deq, Ks] = fas_L13(C,u10,S,T,pslp,gas,rh)
+function [ Fd, Fp, Fc, Deq, Ks] = fas_L13(C,u10,SP,pt,pslp,gas,rh)
 % -------------------------------------------------------------------------
 % Conversion factors
 % -------------------------------------------------------------------------
@@ -85,7 +85,7 @@ if nargin == 6
     rh =0.8.*ones(size(C));
 end;
 
-ph2oveq = vpress(S,T);
+ph2oveq = vpress(SP,pt);
 ph2ov = rh.*ph2oveq;
 
 % slpc = (observed dry air pressure)/(reference dry air pressure)
@@ -95,7 +95,11 @@ pslpc = (pslp - ph2ov)./(1 - ph2oveq);
 % -------------------------------------------------------------------------
 % Parameters for COARE 3.0 calculation
 % -------------------------------------------------------------------------
-rhow = gsw_sigma0(S,T)+1000;
+
+% Calculate potential density at surface
+SA = SP.*35.16504./35;
+CT = gsw_CT_from_pt(SA,pt);
+rhow = gsw_sigma0(SA,CT)+1000;
 rhoa = 1.0;
 
 lam = 13.3;
@@ -114,11 +118,11 @@ R = 8.314;  % units: m3 Pa K-1 mol-1
 % Calculate gas physical properties
 % -------------------------------------------------------------------------
 xG = gasmolfract(gas);
-Geq = gasmoleq(S,T,gas);
-alc = (Geq/atm2Pa).*R.*(T+273.15);
+Geq = gasmoleq(SP,pt,gas);
+alc = (Geq/atm2Pa).*R.*(pt+273.15);
 
 Gsat = C./Geq;
-[~, ScW] = gasmoldiff(S,T,gas);
+[~, ScW] = gasmoldiff(SP,pt,gas);
 
 % -------------------------------------------------------------------------
 % Calculate COARE 3.0 
@@ -147,8 +151,9 @@ Ks= 1./(1./(ustar./rwt+Kb)+1./(ustar./(rat.*alc)));
 
 
 Fd = Ks.*Geq.*(pslpc-Gsat);
-Fp = Kb.*Geq.*((1+dP).*pslpc-Gsat);
+F = Kb.*Geq.*((1+dP).*pslpc-Gsat);
 Fc = xG.*5.56.*ustarw.^3.86;
+Fp = F - Fc;
 
 % -------------------------------------------------------------------------
 % Calculate steady-state supersaturation
