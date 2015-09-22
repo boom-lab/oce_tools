@@ -145,19 +145,20 @@ dP = 1.5244.*ustarw.^1.06;
 % -------------------------------------------------------------------------
 % Calculate air-sea fluxes
 % -------------------------------------------------------------------------
-% 
-%Ks= 1./(1./(ustar./rwt./sqrt(ScW./660)+Kb)+1./(ustar./(rat.*alc)));
-Ks= 1./(1./(ustar./rwt+Kb)+1./(ustar./(rat.*alc)));
+ 
+Ks= 1./(1./(ustar./rwt./sqrt(ScW./660)+Kb)+1./(ustar./(rat.*alc)));
+%Ks= 1./(1./(ustar./rwt+Kb)+1./(ustar./(rat.*alc)));
+%Ks = ustar./(rwt+alc.*rat);
 
 
 Fd = Ks.*Geq.*(pslpc-Gsat);
-F = Kb.*Geq.*((1+dP).*pslpc-Gsat);
+Fp = Kb.*Geq.*((1+dP).*pslpc-Gsat);
 Fc = xG.*5.56.*ustarw.^3.86;
-Fp = F - Fc;
 
 % -------------------------------------------------------------------------
 % Calculate steady-state supersaturation
 % -------------------------------------------------------------------------
+% Liang paper (Kb+Ks), code (Ks) in denominator
 Deq = (Kb.*Geq.*dP.*pslpc+Fc)./((Kb+Ks).*Geq.*pslpc);
 
 end
