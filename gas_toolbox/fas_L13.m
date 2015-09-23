@@ -148,7 +148,9 @@ dP = 1.5244.*ustarw.^1.06;
  
 Ks= 1./(1./(ustar./rwt./sqrt(ScW./660)+Kb)+1./(ustar./(rat.*alc)));
 %Ks= 1./(1./(ustar./rwt+Kb)+1./(ustar./(rat.*alc)));
-%Ks = ustar./(rwt+alc.*rat);
+
+%COARE code: non-bubble trasfer velocity: vtco=usr./(rwo+ra.*alc); with rwo = rwt in this code
+%Ks = ustar./(rwt+rat.*alc);
 
 
 Fd = Ks.*Geq.*(pslpc-Gsat);
