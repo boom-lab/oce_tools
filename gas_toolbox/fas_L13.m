@@ -152,6 +152,7 @@ dP = 1.5244.*ustarw.^1.06;
 % -------------------------------------------------------------------------
 % Calculate air-sea fluxes
 % -------------------------------------------------------------------------
+Kt= 1./(1./(ustar./rwt./sqrt(ScW./660)+Kb)+1./(ustar./(rat.*alc)));
 
 Fd = Ks.*Geq.*(pslpc-Gsat); % Fs in L13 eqn 3
 Fp = Kb.*Geq.*((1+dP).*pslpc-Gsat); % Fp in L13 eqn 3
@@ -160,7 +161,7 @@ Fc = xG.*5.56.*ustarw.^3.86; % L13 eqn 15
 % -------------------------------------------------------------------------
 % Calculate steady-state supersaturation 
 % -------------------------------------------------------------------------
-Deq = (Kb.*Geq.*dP.*pslpc+Fc)./((Kb+Ks).*Geq.*pslpc); % L13 eqn 5
+Deq = (Kb.*Geq.*dP.*pslpc+Fc)./(Kt.*Geq.*pslpc); % L13 eqn 5
 
 end
 
