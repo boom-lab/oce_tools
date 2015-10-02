@@ -1,4 +1,4 @@
-% Function to calculate air-sea bubble flux
+% Function to calculate air-sea fluxes with Liang 2013 parameterization
 %
 % USAGE:-------------------------------------------------------------------
 % 
@@ -73,7 +73,6 @@ function [ Fd, Fp, Fc, Deq, Ks] = fas_L13(C,u10,SP,pt,pslp,gas,rh)
 % -------------------------------------------------------------------------
 m2cm = 100; % cm in a meter
 h2s = 3600; % sec in hour
-L2ml = 1000; % ml in liter
 atm2Pa = 1.01325e5; % Pascals per atm
 
 % -------------------------------------------------------------------------
@@ -125,43 +124,43 @@ Gsat = C./Geq;
 [~, ScW] = gasmoldiff(SP,pt,gas);
 
 % -------------------------------------------------------------------------
-% Calculate COARE 3.0 
+% Calculate COARE 3.0 and gas transfer velocities
 % -------------------------------------------------------------------------
-
 % ustar
 cd10 = cdlp81(u10);
 ustar = u10.*sqrt(cd10);
 
-% water side ustar
+% water-side ustar
 ustarw = ustar./sqrt(rhow./rhoa);
-rwt = sqrt(rhow./rhoa).*(hw.*sqrt(ScW)+(log(.5./tkt)/.4));
-rat = ha.*sqrt(ScA)+1./sqrt(cd10)-5+.5*log(ScA)/.4; %air side
 
-% bubble transfer velocity
+% water-side resistance to transfer
+rwt = sqrt(rhow./rhoa).*(hw.*sqrt(ScW)+(log(.5./tkt)/.4));
+
+% air-side resistance to transfer
+rat = ha.*sqrt(ScA)+1./sqrt(cd10)-5+.5*log(ScA)/.4;
+
+% diffusive gas transfer coefficient (L13 eqn 9)
+Ks = ustar./(rwt+rat.*alc);
+
+% bubble transfer velocity (L13 eqn 14)
 Kb = 1.98e6.*ustarw.^2.76.*(ScW./660).^(-2/3)./(m2cm.*h2s);
-% overpressure dependence on windspeed (eq 16)
+
+% overpressure dependence on windspeed (L13 eqn 16)
 dP = 1.5244.*ustarw.^1.06;
+
 
 % -------------------------------------------------------------------------
 % Calculate air-sea fluxes
 % -------------------------------------------------------------------------
- 
-Ks= 1./(1./(ustar./rwt./sqrt(ScW./660)+Kb)+1./(ustar./(rat.*alc)));
-%Ks= 1./(1./(ustar./rwt+Kb)+1./(ustar./(rat.*alc)));
 
-%COARE code: non-bubble trasfer velocity: vtco=usr./(rwo+ra.*alc); with rwo = rwt in this code
-%Ks = ustar./(rwt+rat.*alc);
-
-
-Fd = Ks.*Geq.*(pslpc-Gsat);
-Fp = Kb.*Geq.*((1+dP).*pslpc-Gsat);
-Fc = xG.*5.56.*ustarw.^3.86;
+Fd = Ks.*Geq.*(pslpc-Gsat); % Fs in L13 eqn 3
+Fp = Kb.*Geq.*((1+dP).*pslpc-Gsat); % Fp in L13 eqn 3
+Fc = xG.*5.56.*ustarw.^3.86; % L13 eqn 15
 
 % -------------------------------------------------------------------------
-% Calculate steady-state supersaturation
+% Calculate steady-state supersaturation 
 % -------------------------------------------------------------------------
-% Liang paper (Kb+Ks), code (Ks) in denominator
-Deq = (Kb.*Geq.*dP.*pslpc+Fc)./((Ks+Kb).*Geq.*pslpc);
+Deq = (Kb.*Geq.*dP.*pslpc+Fc)./((Kb+Ks).*Geq.*pslpc); % L13 eqn 5
 
 end
 
