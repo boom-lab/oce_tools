@@ -161,7 +161,7 @@ Fc = xG.*5.56.*ustarw.^3.86;
 % Calculate steady-state supersaturation
 % -------------------------------------------------------------------------
 % Liang paper (Kb+Ks), code (Ks) in denominator
-Deq = (Kb.*Geq.*dP.*pslpc+Fc)./((Kb+Ks).*Geq.*pslpc);
+Deq = (Kb.*Geq.*dP.*pslpc+Fc)./((Ks+Kb).*Geq.*pslpc);
 
 end
 
