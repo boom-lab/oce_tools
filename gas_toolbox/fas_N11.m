@@ -61,7 +61,7 @@ function [Fas, Finj, Fex, Deq, k] = fas_N11(C,u10,S,T,slp,gas,varargin)
 if nargin > 6
     rhum = varargin{1};
 else
-    rhum = 1;
+    rhum = 0.8;
 end
 ph2oveq = vpress(S,T);
 ph2ov = rhum.*ph2oveq;
