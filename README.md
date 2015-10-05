@@ -1,2 +1,4 @@
-# gas-toolbox
-Matlab functions for properties of dissolved gases in seawater (mainly noble gases, nitrogen and oxygen)
+# oce_tools
+
+MATLAB code for oceanography
+development of the gas_toolbox functions supported by the National Science Foundation OCE award1129644 to David Nicholson

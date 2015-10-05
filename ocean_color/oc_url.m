@@ -1,14 +1,14 @@
-function [ fname ] = ocFileString(t,var,varargin)
-% ocFileString
+function [ fname ] = oc_url(t,var,varargin)
+% oc_url
 % -------------------------------------------------------------------------
 % construncts netCDF filename for NASA Ocean Color OpenDAP server
 % link - http://oceandata.sci.gsfc.nasa.gov/opendap/
 % -------------------------------------------------------------------------
 % USAGE:
 % -------------------------------------------------------------------------
-% [fname] = ocFileString(t,'par')
+% [fname] = oc_url(t,'par')
 % 
-% [fname] = ocFileString(t,'par','sensor','VIIRS','trange','DAY','res','4km')
+% [fname] = oc_url(t,'par','sensor','VIIRS','trange','DAY','res','4km')
 %
 % -------------------------------------------------------------------------
 % INPUTS:
@@ -35,9 +35,6 @@ function [ fname ] = ocFileString(t,var,varargin)
 
 froot = 'http://oceandata.sci.gsfc.nasa.gov/opendap';
 %% parse inputs
-
-%%% parse input parameters
-p = inputParser;
 defaultLevel = 'L3SMI';
 expectedLevel = {'L3SMI'};
 defaultSensor = 'MODISA';
@@ -46,15 +43,19 @@ defaultTrange = '8D';
 expectedTrange = {'8D','R32','DAY','MO','YR'};
 defaultRes = '9km';
 expectedRes = {'4km','9km'};
-
-addRequired(p,'t',@(x) isnumeric(x) || isdatetime(x));
-addRequired(p,'var',@isstr);
-
-addParameter(p,'trange',defaultTrange,@(x) any(validatestring(x,expectedTrange)));
-addParameter(p,'res',defaultRes,@(x) any(validatestring(x,expectedRes)));
-addParameter(p,'sensor',defaultSensor,@(x) any(validatestring(x,expectedSensor)));
-addParameter(p,'level',defaultLevel,@(x) any(validatestring(x,expectedLevel)));
-
+%%% parse input parameters
+persistent p
+if isempty(p)
+    p = inputParser;
+    
+    addRequired(p,'t',@(x) isnumeric(x) || isdatetime(x));
+    addRequired(p,'var',@isstr);
+    
+    addParameter(p,'trange',defaultTrange,@(x) any(validatestring(x,expectedTrange)));
+    addParameter(p,'res',defaultRes,@(x) any(validatestring(x,expectedRes)));
+    addParameter(p,'sensor',defaultSensor,@(x) any(validatestring(x,expectedSensor)));
+    addParameter(p,'level',defaultLevel,@(x) any(validatestring(x,expectedLevel)));
+end
 parse(p,t,var,varargin{:});
 inputs = p.Results;
 
@@ -92,7 +93,7 @@ switch var
         suite = 'PIC';
     case 'poc'
         suite = 'POC';
-    case strcmpni(var,'RRS_',4)
+    case strncmpi(var,'RRS_',4)
         suite = 'RRS';
     case 'sst4'
         suite = 'SST4';
@@ -125,13 +126,14 @@ dtm = dateshift(dtm,'start','second','nearest');
 % adjust time to nearest date with available data
 sCode = sensor2code(sensor);
 switch trange
-    case '8D'
+    case {'8D','R32'}
         % round to 8th days (1,9,17,25,....)
         t1 = dtm-rem(day(dtm,'dayofyear'),8) + 1;
-        tStr = [sCode,dstr(t1),dstr(t1+7)];
-    case 'R32'
-        t1 = dtm-rem(day(dtm,'dayofyear'),32) + 1;
-        tStr = [sCode,dstr(t1),dstr(t1+31)];
+        if strcmpi(trange,'8D')
+            tStr = [sCode,dstr(t1),dstr(t1+7)];
+        else
+            tStr = [sCode,dstr(t1),dstr(t1+31)];
+        end
     case 'DAY'
         t1 = dtm;
         tStr = [sCode,dstr(dtm)];
