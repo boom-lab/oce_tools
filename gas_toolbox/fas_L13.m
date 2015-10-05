@@ -3,10 +3,10 @@
 % USAGE:-------------------------------------------------------------------
 % 
 % [Fd, Fp, Fc, Deq] = fas_L13(0.282,10,35,10,1,'O2')
-%   >Fd = -1.0478e-09
-%   >Fp = 5.7115e-08
-%   >Fc = 2.9978e-08
-%   >Deq = 0.0070
+%   >Fd = 2.2559e-08
+%   >Fp = 6.8604e-08
+%   >Fc = 2.9961e-08
+%   >Deq = 0.0062 
 %
 % DESCRIPTION:-------------------------------------------------------------
 %
@@ -82,7 +82,7 @@ atm2Pa = 1.01325e5; % Pascals per atm
 % if humidity is not provided, set to 0.8 for all values
 if nargin == 6
     rh =0.8.*ones(size(C));
-end;
+end
 
 ph2oveq = vpress(SP,pt);
 ph2ov = rh.*ph2oveq;
