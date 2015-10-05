@@ -75,12 +75,13 @@
 %
 % =========================================================================
 
-function [Fd, Fc, Fp, Deq] = fas(C,u10,S,T,slp,gas,param,varargin)
+function [Fd, Fc, Fp, Deq] = fas(C,u10,S,T,slp,gas,param,rh)
 
 % if humidity is not provided, set to 0.8 for all values
-
 if nargin == 8
-    rh = varargin{1};
+    if mean(rh) < 0 || mean(rh) > 1
+        error('Relative humidity must be 0 <= rh <= 1');
+    end
 else
     rh =0.8.*ones(size(C));
 end
