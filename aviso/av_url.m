@@ -1,16 +1,13 @@
-function [ url ] = av_url(t,varn,varargin )
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+function [ url ] = av_url(varn,varargin )
 % av_url
 % -------------------------------------------------------------------------
-% constructs netCDF filename for hycom.org thredds server
+% constructs netCDF filename for aviso thredds server
 % link - opendap.aviso.altimetry.fr
 % -------------------------------------------------------------------------
 % USAGE:
 % -------------------------------------------------------------------------
-% [url] = av_url(t,'surf_el')
+% [url] = av_url(t,'msla')
 % 
-% [url] = av_url(datetime(2015,7,1),'surf_el')
 %
 % -------------------------------------------------------------------------
 % INPUTS:
@@ -33,7 +30,7 @@ expectedDT = {'dt','nrt'};
 defaultSat = 'allsat';
 expectedSat = {'allsat','twosat'};
 
-validVar = {'msla','madt','u','v','uv','uwind','vwind','mwind','mswh'};
+validVar = {'msla','sla','madt','u','v','uv','uwind','vwind','mwind','mswh'};
 
 
 %%% parse input parameters
@@ -41,19 +38,16 @@ persistent p
 if isempty(p)
     p = inputParser;
     
-    addRequired(p,'t',@(x) isnumeric(x) || isdatetime(x));
     addRequired(p,'varname',@(x) any(validatestring(x,validVar)));
-    
     addParameter(p,'delayMode',defaultDT,@(x) any(validatestring(x,expectedDT)));
     addParameter(p,'sat',defaultSat,@(x) any(validatestring(x,expectedSat)));
     
 
 end
-parse(p,t,varn,varargin{:});
+parse(p,varn,varargin{:});
 inputs = p.Results;
 
 % OPENDAP root directory for sensor and level
-t = inputs.t;
 varn = inputs.varname;
 dt = inputs.delayMode;
 sat = inputs.sat;
@@ -79,7 +73,13 @@ switch varn
         varstr = 'msla-h';
 end
 
+if strcmpi(dt,'nrt') && ismember(varn,{'sla','msla','madt'})
+    dt = 'nrt-over30d';
+end
+
 url = ['http://' uname ':' pswd '@' threddsroot '-' duacsStr dt '-' areaStr '-' sat '-' varstr];
+
+% some example valid urls
 % http://opendap.aviso.altimetry.fr/thredds/dodsC/dataset-duacs-nrt-over30d-global-allsat-madt-h
 % http://opendap.aviso.altimetry.fr/thredds/dodsC/dataset-nrt-global-merged-mwind
 % http://opendap.aviso.altimetry.fr/thredds/dodsC/dataset-nrt-global-merged-mswh
@@ -87,17 +87,6 @@ url = ['http://' uname ':' pswd '@' threddsroot '-' duacsStr dt '-' areaStr '-' 
 % http://opendap.aviso.altimetry.fr/thredds/dodsC/dataset-duacs-dt-global-allsat-madt-uv
 % http://opendap.aviso.altimetry.fr/thredds/dodsC/dataset-duacs-dt-global-twosat-madt-h
 % http://opendap.aviso.oceanobs.com/thredds/dodsC/dataset-duacs-dt-global-allsat-msla-uv
-
-
-% time in datetime - dateshift ensures there are not artifacts from
-% numerical rounding errors in conversion from datenum
-% if ~isdatetime(t)
-%     dtm = datetime(t, 'ConvertFrom', 'datenum');
-% else
-%     dtm = t;
-% end
-% dtm = dateshift(dtm,'start','second','nearest');
-
 
 
 

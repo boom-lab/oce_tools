@@ -33,12 +33,6 @@ p = inputParser;
 
 expectedVarName = {'surf_el','water_u','water_v','water_temp','salinity'};
 
-defaultSensor = 'MODISA';
-expectedSensor = {'MODISA','MODIST','VIIRS','SeaWiFS','Aquarius'};
-defaultTrange = '8D';
-expectedTrange = {'8D','R32','DAY','MO','YR'};
-defaultRes = '9km';
-expectedRes = {'4km','9km'};
 
 addRequired(p,'lonRng',@(x) isnumeric(x) & length(x) == 2);
 addRequired(p,'latRng',@(x) isnumeric(x) & length(x) == 2);
