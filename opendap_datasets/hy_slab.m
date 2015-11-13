@@ -154,7 +154,7 @@ if isSSH
             slab = ncread(url,varName,[ilon(1),ilat(1),it(1)],[nlon,nlat,nt]);
         end
     end
-    permute(slab,[2,1,3]);
+    %permute(slab,[2,1,3]);
 else
     % preallocate slab - will permute it at the end
     slab = nan(nlon,nlat,nz,nt);
