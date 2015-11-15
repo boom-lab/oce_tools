@@ -6,7 +6,7 @@ function [ outvar,latout,lonout,tout,zout] = hy_2obs(lat,lon,z,t,var,varargin)
 % -------------------------------------------------------------------------
 % USAGE:
 % -------------------------------------------------------------------------
-% [ssh] = hy_2obs(lat,lon,t,'surface_el');
+% [ssh] = hy_2obs(lat,lon,z,t,'surf_el');
 % -------------------------------------------------------------------------
 % INPUTS:
 % -------------------------------------------------------------------------
@@ -58,18 +58,18 @@ end
 lon = mod(lon,360);
 % clean up lon, t and construct full filename      
 
-latrng = [floor(min(lat)) ceil(max(lat))];
+latrng = [min(lat) max(lat)];
 % 0 - 360 range
-lonrng1 = [floor(min(lon)) ceil(max(lon))];
+lonrng1 = [min(lon) max(lon)];
 lon2 = lon;
 lon2(lon > 180) = lon(lon > 180) - 360;
-lonrng2 = [floor(min(lon2)) ceil(max(lon2))];
+lonrng2 = [min(lon2) max(lon2)];
 if diff(lonrng1) < diff(lonrng2)
-    % within 0 - 360 range
+    % if data falls within 0 - 360 range
     lonrng = lonrng1;
 else
-    % wrap around prime meridian
-    lonrng = flip(lonrng1);
+    % if it is better to wrap around prime meridian
+    lonrng = lonrng2;
 end
 trng = [min(dtm) max(dtm)];
 zrng = [floor(min(z)) ceil(max(z))];

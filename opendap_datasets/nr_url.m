@@ -1,4 +1,4 @@
-function [ url ] = nr_url(varName,yr)
+function [ url ] = nr_url(varName,subdir,yr)
 % nr_url
 % -------------------------------------------------------------------------
 % constructs netCDF filename for ncep reanalysis thredds server
@@ -6,7 +6,7 @@ function [ url ] = nr_url(varName,yr)
 % -------------------------------------------------------------------------
 % USAGE:
 % -------------------------------------------------------------------------
-% [url] = nr_url('uwnd.10m')
+% [url] = nr_url('uwnd','surface_gauss')
 % 
 %
 % -------------------------------------------------------------------------
@@ -33,31 +33,51 @@ else
     yrStr = yr;
 end
 
-switch varName
-    case {'uwnd.10m','vwnd.10m'}
-        fileDir = 'surface_gauss';
-        lev = '.gauss.';
-    case {'nswrs','nlwrs','shtfl','lhtfl','prate','vflx','uflx'}
-        fileDir = 'surface_gauss';
-        lev = '.sfc.gauss.';
-    case {'rhum.sig995','air.sig995','uwnd.sig995','vwnd.sig995',...
-            'pottmp.sig995','omega.sig995.','lftx.sfc','lftx4.sfc',...
-            'pres.sfc','topo.sfc','hqt.sfc','slp','pr_wtr.eatm'}
-        fileDir = 'surface';
-        lev = '.';
-    case {'varName','topo','hqt','land'}
-        fileDir = 'surface';
-        yrStr = '';
+middle = '';
+append = '.';
+switch subdir
+    case {'surface_gauss','other_gauss'}
+        append = '.gauss.';
+        switch varName
+            case {'uwnd','vwnd'}
+                middle = '.10m';
+            case {'air','shum','tmax'}
+                middle = '.2m';
+            case {'cfnlf','cprat','csdlf','csusf','dlwrf','dswrf',...
+                    'gflux','icec','lhtfl','nbdsf','nddsf','nlwrs',...
+                    'nswrs','pevpr','prate','pres','runof','sfcr',...
+                    'shtfl','skt','uflx','ugwd','ulwrf','vbdsf',...
+                    'vddsf','vlwrf','vflx','vgwd','weasd'}
+                middle = '.sfc';
+            otherwise
+                middle = '';
+        end
+                    
+    case 'surface'
+        switch varName
+            case {'lftx','lftx4','pres'}
+                middle = '.sfc';
+            case {'air','omega','pottemp','rhum','uwnd','vwnd'}
+                middle = '.sig995';
+            case {'pr_wtr'}
+                middle = '.eatm';
+            case {'topo','hqt','land'}
+                yrStr = '';
+                middle = '';
+        end
+    % 'sfc' variables exist in both directories
+    case 'spectral'
+        append = '.spec.';
+    case 'tropopause'
+        append = '.tropp.';
     otherwise
-        error(['invalid variable: ' varName '. must be one of: uwnd.10m,'...
-            'vwnd.10m,nswrs,nlwrs,shtfl,lhtfl,prate,vflx,uflx,rhum.sig995'...
-            'air.sig995,uwnd.sig995,vwnd.sig995,pottmp.sig995,omega.sig995'...
-            'lftx.sfc,lftx4.sfc,pres.sfc,topo.sfc,hqt.sfc,slp,pr_wtr.eatm'...
-            'topo,hqt or land']);
+        error(['invalid sub directory: ' subdir '. must be one of: '...
+            'surface','surface_gauss','other_gauss','tropopause','pressure,']);
 
 end
+
         
-url = fullfile(threddsroot,fileDir,[varName,lev,yrStr,'.nc']);
+url = fullfile(threddsroot,subdir,[varName,middle,append,yrStr,'.nc']);
 
 end
 

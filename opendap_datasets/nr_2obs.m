@@ -1,20 +1,20 @@
-function [ outvar,latout,lonout,tout] = av_2obs(lat,lon,t,var,varargin)
+function [ outvar,latout,lonout,tout] = nr_2obs(lat,lon,t,var,subDir)
 % hy_2obs
 % -------------------------------------------------------------------------
-% extracts aviso output nearest to inputted lat/lon/t vectors
+% extracts ncep reanalysis output nearest to inputted lat/lon/t vectors
 % 
 % -------------------------------------------------------------------------
 % USAGE:
 % -------------------------------------------------------------------------
-% [ssh] = av_2obs(lat,lon,t,'sla');
+% [ssh] = nr_2obs(lat,lon,t,'uwnd.10m','surface_gauss');
 % -------------------------------------------------------------------------
 % INPUTS:
 % -------------------------------------------------------------------------
 % lat:      vector of observed latitudes
 % lon:      vector of observed longitudes (between [-180 and +360])
 % t:        datetime or datenum time input - vector or scalar
-% var:      string of input variable
-% varargin: optional variables passed through to av_url.m
+% var:      string of input variable e.g. 'uwnd' or 'slp'
+% subdir:   subDirectory for variable e.g., 'surface' or 'surface_gauss'
 % 
 % -------------------------------------------------------------------------
 % OUTPUTS:
@@ -29,11 +29,11 @@ function [ outvar,latout,lonout,tout] = av_2obs(lat,lon,t,var,varargin)
 % -------------------------------------------------------------------------
 % ALSO SEE: 
 % -------------------------------------------------------------------------
-% av_url.m
-% av_slab.m
+% nr_url.m
+% nr_slab.m
 %
 % -------------------------------------------------------------------------
-% ABOUT: David Nicholson // dnicholson@whoi.edu // 9 NOV 2015
+% ABOUT: Dnrid Nicholson // dnicholson@whoi.edu // 14 NOV 2015
 % -------------------------------------------------------------------------
 
 nobs = length(lat);
@@ -56,22 +56,23 @@ end
 lon = mod(lon,360);
 % clean up lon, t and construct full filename      
 
-latrng = [floor(min(lat)) ceil(max(lat))];
+latrng = [min(lat) max(lat)];
 % 0 - 360 range
-lonrng1 = [floor(min(lon)) ceil(max(lon))];
+lonrng1 = [min(lon) max(lon)];
 lon2 = lon;
+% -180 - 180
 lon2(lon > 180) = lon(lon > 180) - 360;
 lonrng2 = [floor(min(lon2)) ceil(max(lon2))];
-if diff(lonrng1) <= diff(lonrng2)
-    % within 0 - 360 range
-    lonrng = lonrng1;
-else
-    % wrap around prime meridian
-    lonrng = lonrng2;
+if abs(diff(lonrng1)) <= abs(diff(lonrng2))
+     % within 0 - 360 range
+     lonrng = lonrng1;
+ else
+     % wrap around prime meridian
+     lonrng = lonrng2;
 end
 trng = [min(dtm) max(dtm)];
 
-[slab,latAv,lonAv,tAv] = av_slab(latrng,lonrng,trng,var);
+[slab,latnr,lonnr,tnr] = nr_slab(latrng,lonrng,trng,var,subDir);
 
 
 %% Initialize output and get nearest datapoint to each obs point
@@ -82,13 +83,13 @@ lonout = NV;
 tout = datetime(NV,'ConvertFrom','datenum');
 
 for ii = 1:nobs
-    [~,ilat] = min(abs(lat(ii) - latAv));
-    [~,ilon] = min(abs(lon(ii) - lonAv));
-    [~,it] = min(abs(tAv-dtm(ii)));
+    [~,ilat] = min(abs(lat(ii) - latnr));
+    [~,ilon] = min(abs(lon(ii) - lonnr));
+    [~,it] = min(abs(tnr-dtm(ii)));
     outvar(ii) = slab(ilat,ilon,it);
-    latout(ii) = latAv(ilat);
-    lonout(ii) = lonAv(ilon);
-    tout(ii) = tAv(it);
+    latout(ii) = latnr(ilat);
+    lonout(ii) = lonnr(ilon);
+    tout(ii) = tnr(it);
 end
 
 

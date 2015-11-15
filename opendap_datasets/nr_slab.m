@@ -1,4 +1,4 @@
-function [ slab,lat,lon,dtmout] = nr_slab(latRng,lonRng,tRng,varName)
+function [ slab,lat,lon,dtmout] = nr_slab(latRng,lonRng,tRng,varName,subdir)
 
 % nr_url
 % -------------------------------------------------------------------------
@@ -32,17 +32,18 @@ function [ slab,lat,lon,dtmout] = nr_slab(latRng,lonRng,tRng,varName)
 %%% parse input parameters
 p = inputParser;
 
-expectedVarName = {'nswrs','nlwrs','shtfl','lhtfl','prate','vflx','uflx',...
-    'rhum.sig995','air.sig995','uwnd.sig995','vwnd.sig995','pottmp.sig995',...
-    'omega.sig995.','lftx.sfc','lftx4.sfc','pres.sfc','topo.sfc','hqt.sfc',...
-    'slp','pr_wtr.eatm','uwnd.10m','vwnd.10m'};
+%expectedVarName = {'nswrs','nlwrs','shtfl','lhtfl','prate','vflx','uflx',...
+%    'rhum','air','uwnd','vwnd','pottmp','omega','lftx','lftx4','pres.sfc',...
+%    'topo.sfc','hqt.sfc','slp','pr_wtr'};
+expectedLevel = {'surface','surface_gauss','other_gauss','pressure','spectral','tropopause'};
 
 addRequired(p,'lonRng',@(x) isnumeric(x) & length(x) == 2);
 addRequired(p,'latRng',@(x) isnumeric(x) & length(x) == 2);
 addRequired(p,'tRng',@(x) (isnumeric(x) || isdatetime(x)) & length(x) == 2);
-addRequired(p,'varName',@(x) any(validatestring(x,expectedVarName)));
+addRequired(p,'varName',@(x) ischar(x));
+addRequired(p,'subDir',@(x) any(validatestring(x,expectedLevel)));
 
-parse(p,lonRng,latRng,tRng,varName);
+parse(p,lonRng,latRng,tRng,varName,subdir);
 inputs = p.Results;
 
 % validated inputs
@@ -50,6 +51,7 @@ lonRng = inputs.lonRng;
 latRng = inputs.latRng;
 tRng = inputs.tRng;
 varName = inputs.varName;
+subdir = inputs.subDir;
 
 
 if ~isdatetime(tRng)
@@ -62,7 +64,7 @@ yrs = year(tRng(1)):year(tRng(2));
 nyrs = length(yrs);
 urls = cell(nyrs,1);
 for ii = 1:nyrs
-    urls{ii} = nr_url(varName,yrs(ii));
+    urls{ii} = nr_url(varName,subdir,yrs(ii));
 end
 nrlon = ncread(urls{1},'lon');
 nrlat = ncread(urls{1},'lat');
@@ -94,6 +96,10 @@ nlon = length(lon);
 slab = [];
 dtmout = [];
 
+% if level is included - seperate
+% .e.g.  uwnd.u10m --> variable name is uwnd
+varc = strsplit(varName,'.');
+
 for ii = 1:nyrs
     t = ncread(urls{ii},'time');
     dtm = datetime(1800,1,1,t,0,0);
@@ -101,12 +107,12 @@ for ii = 1:nyrs
     nt = length(it);
     yrslab = nan(nlon,nlat,nt);
     if isLonSplit
-        yrslab(1:nlon1,:,:) = ncread(urls{ii},varName,[ilon1(1),ilat(1),it(1)],...
+        yrslab(1:nlon1,:,:) = ncread(urls{ii},varc{1},[ilon1(1),ilat(1),it(1)],...
             [nlon1,nlat,nt]);
-        yrslab(nlon1+1:end,:,:) = ncread(urls{ii},varName,[1,ilat(1),it(1)],...
+        yrslab(nlon1+1:end,:,:) = ncread(urls{ii},varc{1},[1,ilat(1),it(1)],...
             [nlon2,nlat,nt]);
     else
-        yrslab = ncread(urls{ii},varName,[ilon(1),ilat(1),it(1)],[nlon,nlat,nt]);
+        yrslab = ncread(urls{ii},varc{1},[ilon(1),ilat(1),it(1)],[nlon,nlat,nt]);
         
     end
     slab = cat(3,slab,yrslab);
