@@ -1,12 +1,12 @@
-function [ outvar,latout,lonout,tout] = nr_2obs(lat,lon,t,var,subDir)
-% hy_2obs
+function [outvar,latout,lonout,tout] = nr_2obs(lat,lon,t,var,subDir)
+% nr_2obs
 % -------------------------------------------------------------------------
 % extracts ncep reanalysis output nearest to inputted lat/lon/t vectors
 % 
 % -------------------------------------------------------------------------
 % USAGE:
 % -------------------------------------------------------------------------
-% [ssh] = nr_2obs(lat,lon,t,'uwnd.10m','surface_gauss');
+% [outvar,latout,lonout,tout] = nr_2obs(lat,lon,t,'uwnd.10m','surface_gauss');
 % -------------------------------------------------------------------------
 % INPUTS:
 % -------------------------------------------------------------------------
@@ -20,11 +20,9 @@ function [ outvar,latout,lonout,tout] = nr_2obs(lat,lon,t,var,subDir)
 % OUTPUTS:
 % -------------------------------------------------------------------------
 % outvar:   vector of requested data
-% units:    string with units for outvar
-% fname:    opendap addresses for files that were accesed
-% lonout:   vector of longitudes corresponding to matched NASA grid cell
-% latout:   vector of latitudes corresponding to matched NASA grid cell
-%
+% lonout:   vector of longitudes corresponding to matched grid cell
+% latout:   vector of latitudes corresponding to matched grid cell
+% tout:   vector of time corresponding to matched grid cell
 %
 % -------------------------------------------------------------------------
 % ALSO SEE: 
@@ -33,7 +31,7 @@ function [ outvar,latout,lonout,tout] = nr_2obs(lat,lon,t,var,subDir)
 % nr_slab.m
 %
 % -------------------------------------------------------------------------
-% ABOUT: Dnrid Nicholson // dnicholson@whoi.edu // 14 NOV 2015
+% ABOUT: David Nicholson // dnicholson@whoi.edu // 14 NOV 2015
 % -------------------------------------------------------------------------
 
 nobs = length(lat);
@@ -47,7 +45,7 @@ if ~isdatetime(t)
 else
     dtm = t;
 end
-dtm = dateshift(dtm,'start','day');
+%dtm = dateshift(dtm,'start','day');
 
 if length(lon) ~= nobs || length(t) ~= nobs
     error('lat,lon and t must be the same length or scalar');
@@ -73,7 +71,6 @@ end
 trng = [min(dtm) max(dtm)];
 
 [slab,latnr,lonnr,tnr] = nr_slab(latrng,lonrng,trng,var,subDir);
-
 
 %% Initialize output and get nearest datapoint to each obs point
 NV = nan(nobs,1);
