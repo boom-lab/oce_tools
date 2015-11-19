@@ -1,13 +1,13 @@
 function [ slab,lat,lon,dtmout] = nr_slab(latRng,lonRng,tRng,varName,subdir)
 
-% nr_url
+% nr_slab
 % -------------------------------------------------------------------------
 % accesses nrcom.org thredds server to retrieve slab of data that can span
 % two files and/or wrap around 360/0 longitude edge
 % -------------------------------------------------------------------------
 % USAGE:
 % -------------------------------------------------------------------------
-% [slp,latout,lonout,tout] = nr_slab(latrng,lonrng,[t1,t2],'slp');
+% [slab,latout,lonout,tout] = nr_slab(latrng,lonrng,[t1,t2],'slp','surface_gauss');
 %
 % -------------------------------------------------------------------------
 % INPUTS:
@@ -17,14 +17,15 @@ function [ slab,lat,lon,dtmout] = nr_slab(latRng,lonRng,tRng,varName,subdir)
 % latRng:   range of latitude to retrieve [S_edge N_edge]
 % tRng:     datenum or datetime range to retrieve - can span multiple yrs
 % varName:  string name of variable
+% subdir:   subDirectory for variable e.g., 'surface' or 'surface_gauss'
 %
 % -------------------------------------------------------------------------
 % OUTPUTS:
 % -------------------------------------------------------------------------
 % slab:     hyperslab of requested data [lat x lon x t]
-% lat:      corresponding lats
-% lon:      corresponding lons
-% t:        corresponding datenums
+% latout:   corresponding lats
+% lonout:   corresponding lons
+% tout:     corresponding datenums
 %
 % -------------------------------------------------------------------------
 % ABOUT:  David Nicholson // dnicholson@whoi.edu // 01 JUL 2015
@@ -71,6 +72,8 @@ nrlat = ncread(urls{1},'lat');
 
 % get requested lat range
 ilat = find(nrlat >= latRng(1) & nrlat <= latRng(2));
+ilat = [min(ilat)-1; ilat; max(ilat)+1]; % Add points just outside the extremes
+ilat(ilat<1 | ilat>length(nrlat)) = [];
 nlat = length(ilat);
 lat = nrlat(ilat);
 
@@ -80,14 +83,21 @@ nrlon = mod(nrlon,360);
 
 if lonRng(1) > lonRng(2)
     isLonSplit = 1;
-    ilon1 = find(nrlon >= lonRng(1));
+    ilon1 = find(nrlon >= lonRng(1)); % Add point just outside the extreme
+    ilon1 = [min(ilon1)-1; ilon1];
     nlon1 = length(ilon1);
-    ilon2 = find(nrlon <= lonRng(2));
+    ilon2 = find(nrlon <= lonRng(2)); % Add point just outside the extreme
+    ilon2 = [ilon2; max(ilon2)+1];
+    if max(ilon2) == min(ilon1)
+        ilon2(end) = [];
+    end
     nlon2 = length(ilon2);
     lon = [nrlon(ilon1);nrlon(ilon2)];
 else
     isLonSplit = 0;
     ilon = find(nrlon >= lonRng(1) & nrlon <= lonRng(2));
+    ilon = [min(ilon)-1; ilon; max(ilon)+1]; % Add points just outside the extremes
+    ilon(ilon<1 | ilon>length(nrlon)) = [];
     lon = nrlon(ilon);   
 end
 nlon = length(lon);
@@ -104,6 +114,8 @@ for ii = 1:nyrs
     t = ncread(urls{ii},'time');
     dtm = datetime(1800,1,1,t,0,0);
     it = find(dtm > tRng(1) & dtm < tRng(2));
+    it = [min(it)-1; it; max(it)+1]; % Add points just outside the extremes
+    it(it<1 | it>length(dtm)) = [];
     nt = length(it);
     yrslab = nan(nlon,nlat,nt);
     if isLonSplit
