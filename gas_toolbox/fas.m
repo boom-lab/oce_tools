@@ -75,7 +75,7 @@
 %
 % =========================================================================
 
-function [Fd, Fc, Fp, Deq] = fas(C,u10,S,T,slp,gas,param,rh)
+function [Fd, Fc, Fp, Deq,k] = fas(C,u10,S,T,slp,gas,param,rh)
 
 % if humidity is not provided, set to 0.8 for all values
 if nargin == 8
@@ -89,13 +89,13 @@ end
 
 switch upper(param)
     case 'S09'
-        [Fd, Fc, Fp, Deq] = fas_S09(C,u10,S,T,slp,gas,rh);
+        [Fd, Fc, Fp, Deq, k] = fas_S09(C,u10,S,T,slp,gas,rh);
     case 'N11'
-        [Fd, Fc, Fp, Deq] = fas_N11(C,u10,S,T,slp,gas,rh);
+        [Fd, Fc, Fp, Deq, k] = fas_N11(C,u10,S,T,slp,gas,rh);
     case 'SW07'
-        [Fd, Fc, Fp, Deq] = fas_Sw07(C,u10,S,T,slp,gas,rh);
+        [Fd, Fc, Fp, Deq, k] = fas_Sw07(C,u10,S,T,slp,gas,rh);
     case 'L13'
-        [Fd, Fp, Fc, Deq] = fas_L13(C,u10,S,T,slp,gas,rh);
+        [Fd, Fp, Fc, Deq, k] = fas_L13(C,u10,S,T,slp,gas,rh);
     otherwise
         error('only S09,N11,Sw07 and L13 are supported');
 end

@@ -87,7 +87,7 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [Fd, Fc, Fp, Deq] = fas_N11(C,u10,S,T,slp,gas,varargin)
+function [Fd, Fc, Fp, Deq, k] = fas_N11(C,u10,S,T,slp,gas,varargin)
 
 % 1.5 factor converts from average winds to instantaneous - see N11 ref.
 Ainj = 2.51e-9./1.5;

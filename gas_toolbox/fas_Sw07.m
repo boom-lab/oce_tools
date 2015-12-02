@@ -1,4 +1,4 @@
-% [Fd, Fc, Fp, Deq] = fas_Sw07(C,u10,S,T,slp,gas,rh)
+% [Fd, Fc, Fp, Deq,k] = fas_Sw07(C,u10,S,T,slp,gas,rh)
 % Function to calculate air-sea gas exchange flux using Sweeney 07
 % parameterization (k_660 = 0.27 cm/hr)
 %

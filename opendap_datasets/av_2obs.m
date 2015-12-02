@@ -71,7 +71,7 @@ else
 end
 trng = [min(dtm) max(dtm)];
 
-[slab,latAv,lonAv,tAv] = av_slab(latrng,lonrng,trng,var);
+[slab,latAv,lonAv,tAv] = av_slab(latrng,lonrng,trng,var,varargin{:});
 
 
 %% Initialize output and get nearest datapoint to each obs point
