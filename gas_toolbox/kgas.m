@@ -10,6 +10,7 @@
 % u10       10-m windspeed (m/s)
 % Sc        Schmidt number 
 % param     abbreviation for parameterization:
+%           W14  = Wanninkhof 2014
 %           W92a = Wanninkhof 1992 - averaged winds
 %           W92b = Wanninkhof 1992 - instantaneous or steady winds
 %           Sw07 = Sweeney et al. 2007
@@ -31,11 +32,14 @@
 % -------------------------------------------------------------------------
 % REFERENCES:
 % -------------------------------------------------------------------------
+% Wanninkhof, R. (2014). Relationship between wind speed and gas exchange
+% over the ocean revisited. Limnol. Oceanogr. Methods, 12(6), 351-362.
+%
 % Wanninkhof, R. (1992). Relationship between wind speed and gas exchange.
 % J. Geophys. Res, 97(25), 7373-7382.
 %
 % Sweeney, C., Gloor, E., Jacobson, A. R., Key, R. M., McKinley, G.,
-% Sarmiento, J. L., & Wanninkhof, R. (2007). Constraining global air?sea
+% Sarmiento, J. L., & Wanninkhof, R. (2007). Constraining global air-sea
 % gas exchange for CO2 with recent bomb 14C measurements. Global
 % Biogeochem. Cy.,21(2).
 %
