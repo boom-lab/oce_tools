@@ -1,14 +1,15 @@
-% [Fd, Fc, Fp, Deq] = fas_S09(C,u10,S,T,slp,gas,rh)
+% [Fd, Fc, Fp, Deq, k] = fas_S09(C,u10,S,T,slp,gas,rh)
 % Function to calculate air-sea gas exchange flux using Stanley 09
 % parameterization
 %
 % USAGE:-------------------------------------------------------------------
-% [Fd, Fc, Fp, Deq] = fas_S09(C,u10,S,T,slp,gas,rh)
-% [Fd, Fc, Fp, Deq] = fas_S09(0.01410,5,35,10,1,'Ar',0.9)
+% [Fd, Fc, Fp, Deq, k] = fas_S09(C,u10,S,T,slp,gas,rh)
+% [Fd, Fc, Fp, Deq, k] = fas_S09(0.01410,5,35,10,1,'Ar',0.9)
 %   > Fd = -4.9960e-09
 %   > Fc = 7.3493e-10
 %   > Fp = 1.8653e-13
 %   > Deq = 0.0027
+%   > k = 1.9340e-05
 %
 % DESCRIPTION:-------------------------------------------------------------
 % Calculate air-sea fluxes and steady-state supersaturation based on:
@@ -39,7 +40,8 @@
 % S:    Sea surface salinity (PSS)
 % T:    Sea surface temperature (deg C)
 % slp:  sea level pressure (atm)
-% gas:  two letter code for gas (He, Ne, Ar, Kr, Xe, N2, or O2)
+% gas:  formula for gas (He, Ne, Ar, Kr, Xe, N2, or O2), formatted as a
+%       string, e.g. 'He'
 % rh:   relative humidity in the marine boundary layer as a fraction of
 %       saturation (0.5 = 50% RH).
 %       rh is an optional but recommended argument. If not provided, it
@@ -47,9 +49,12 @@
 %
 % OUTPUTS:-----------------------------------------------------------------
 % Fd:   Diffusive air-sea flux                        (mol m-2 s-1)
-% Fp:   Flux from partially collapsing large bubbles  (mol m-2 s-1)
 % Fc:   Flux from fully collapsing small bubbles      (mol m-2 s-1)
+% Fp:   Flux from partially collapsing large bubbles  (mol m-2 s-1)
 % Deq:  Equilibrium supersaturation                   (unitless (%sat/100))
+% k:    Diffusive gas transfer velocity               (m s-1)
+%
+% Note: Total air-sea flux is Ft = Fd + Fp + Fc
 %
 % REFERENCE:---------------------------------------------------------------
 %

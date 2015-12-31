@@ -2,11 +2,12 @@
 %
 % USAGE:-------------------------------------------------------------------
 % 
-% [Fd, Fp, Fc, Deq] = fas_L13(0.282,10,35,10,1,'O2')
+% [Fd, Fp, Fc, Deq, k] = fas_L13(0.282,10,35,10,1,'O2')
 %   >Fd = 2.2559e-08
 %   >Fp = 6.8604e-08
 %   >Fc = 2.9961e-08
 %   >Deq = 0.0062 
+%   >k = 3.3370e-05
 %
 % DESCRIPTION:-------------------------------------------------------------
 %
@@ -19,10 +20,11 @@
 % INPUTS:------------------------------------------------------------------
 % C:    gas concentration (mol m-3)
 % u10:  10 m wind speed (m/s)
-% SP:    Sea surface salinity (PSS)
-% pt:    Sea surface temperature (deg C)
+% SP:   Sea surface salinity (PSS)
+% pt:   Sea surface temperature (deg C)
 % pslp: sea level pressure (atm)
-% gas:  two letter code for gas (He, Ne, Ar, Kr, Xe, N2, or O2)  
+% gas:  formula for gas (He, Ne, Ar, Kr, Xe, N2, or O2), formatted as a
+%       string, e.g. 'He'
 % rh:   relative humidity as a fraction of saturation (0.5 = 50% RH)
 %       rh is an optional but recommended argument. If not provided, it
 %       will be automatically set to 0.8.
@@ -43,6 +45,9 @@
 % Fp:   Flux from partially collapsing large bubbles  (mol m-2 s-1)
 % Fc:   Flux from fully collapsing small bubbles      (mol m-2 s-1)
 % Deq:  Equilibrium supersaturation                   (unitless (%sat/100))
+% k:    Diffusive gas transfer velocity               (m s-1)
+%
+% Note: Total air-sea flux is Ft = Fd + Fc + Fp
 %
 % REFERENCE:---------------------------------------------------------------
 %

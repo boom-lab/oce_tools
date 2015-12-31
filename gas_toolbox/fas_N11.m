@@ -4,13 +4,14 @@
 %
 % USAGE:-------------------------------------------------------------------
 %  
-% [Fd, Fc, Fp, Deq] = fas_N11(C,u10,S,T,slp,gas,rh)
-% [Fd, Fc, Fp, Deq] = fas_N11(0.01410,5,35,10,1,'Ar',0.9)
+% [Fd, Fc, Fp, Deq, k] = fas_N11(C,u10,S,T,slp,gas,rh)
+% [Fd, Fc, Fp, Deq, k] = fas_N11(0.01410,5,35,10,1,'Ar',0.9)
 %
 % > Fd = -4.4860e-09
 % > Fc = 3.1432e-10
 % > Fp = 9.0980e-11
 % > Deq = 1.6882e-03
+% > k = 1.7365e-05
 %
 % DESCRIPTION:-------------------------------------------------------------
 %
@@ -43,7 +44,7 @@
 % T:    Sea surface temperature (deg C)
 % slp:  sea level pressure (atm)
 %
-% gas:  two letter code for gas
+% gas:  formula for gas, formatted as a string, e.g. 'He'
 %       Code    Gas name        Reference
 %       ----   ----------       -----------
 %       He      Helium          Weiss 1971
@@ -64,9 +65,12 @@
 % Fc:   Injection bubble flux (complete trapping)     [mol m-2 s-1]
 % Fp:   Exchange bubble flux (partial trapping)       [mol m-2 s-1]
 % Deq:  Steady-state supersaturation                  [unitless (%sat/100)]
+% k:    Diffusive gas transfer velocity               (m s-1)
+%
+% Note: Total air-sea flux is Ft = Fd + Fc + Fp
 %
 % REFERENCE:---------------------------------------------------------------
-% Nicholson, D., S. Emerson, S. Khatiwala, R. C. Hamme. (in press) 
+% Nicholson, D., S. Emerson, S. Khatiwala, R. C. Hamme (2011)
 %   An inverse approach to estimate bubble-mediated air-sea gas flux from 
 %   inert gas measurements.  Proceedings on the 6th International Symposium
 %   on Gas Transfer at Water Surfaces.  Kyoto University Press.

@@ -1,14 +1,15 @@
-% [Fd, Fc, Fp, Deq,k] = fas_Sw07(C,u10,S,T,slp,gas,rh)
+% [Fd, Fc, Fp, Deq, k] = fas_Sw07(C,u10,S,T,slp,gas,rh)
 % Function to calculate air-sea gas exchange flux using Sweeney 07
 % parameterization (k_660 = 0.27 cm/hr)
 %
 % USAGE:-------------------------------------------------------------------  
-% [Fd, Fc, Fp, Deq] = fas_Sw07(C,u10,S,T,slp,gas,rh)
-% [Fd, Fc, Fp, Deq] = fas_Sw07(0.01410,5,35,10,1,'Ar',0.9)
+% [Fd, Fc, Fp, Deq, k] = fas_Sw07(C,u10,S,T,slp,gas,rh)
+% [Fd, Fc, Fp, Deq, k] = fas_Sw07(0.01410,5,35,10,1,'Ar',0.9)
 %   > Fd = -4.4860e-09
 %   > Fc = 0
 %   > Fp = 0
 %   > Deq = 0
+%   > k = 1.7365e-05
 % 
 % DESCRIPTION:-------------------------------------------------------------
 % Calculate air-sea fluxes and steady-state supersaturation based on:
@@ -24,7 +25,8 @@
 % S:    Sea surface salinity
 % T:    Sea surface temperature (deg C)
 % slp:  sea level pressure (atm)
-% gas:  two letter code for gas (He, Ne, Ar, Kr, Xe, O2, N2)
+% gas:  formula for gas (He, Ne, Ar, Kr, Xe, N2, or O2), formatted as a
+%       string, e.g. 'He'
 % rh:   relative humidity as a fraction of saturation (0.5 = 50% RH)
 %       rh is an optional but recommended argument. If not provided, it
 %       will be automatically set to 0.8.
@@ -34,9 +36,12 @@
 % Fc:   Flux from fully collapsing small bubbles      (mol m-2 s-1)
 % Fp:   Flux from partially collapsing large bubbles  (mol m-2 s-1)
 % Deq:  Equilibrium supersaturation                   (unitless (%sat/100))
+% k:    Diffusive gas transfer velocity               (m s-1)
 %
-% Note: Fp, Fc, and Deq will always be 0 and are included as outputs for
-% consistency with the other fas functions.
+% Note: Total air-sea flux is Ft = Fd + Fc + Fp
+%
+% Note: Fp, Fc, and Deq will always be 0 for fas_Sw07. They are
+% included as outputs for consistency with the other fas functions.
 %
 % REFERENCE:---------------------------------------------------------------
 % Sweeney, C., Gloor, E., Jacobson, A. R., Key, R. M., McKinley, G.,
@@ -67,7 +72,7 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [Fd, Fc, Fp, Deq] = fas_Sw07(C,u10,S,T,slp,gas,rh)
+function [Fd, Fc, Fp, Deq, k] = fas_Sw07(C,u10,S,T,slp,gas,rh)
 
 % -------------------------------------------------------------------------
 % Check for humidity, calculate dry pressure
