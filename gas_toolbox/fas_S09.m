@@ -70,7 +70,7 @@
 % AUTHOR:------------------------------------------------------------------
 %
 % Cara Manning (cmanning@whoi.edu) Woods Hole Oceanographic Institution
-% Version: 1.0 // September 2015
+% Version: 2.0 // January 2016
 % Checked and approved by Rachel Stanley on September 20, 2015.
 %
 % COPYRIGHT:---------------------------------------------------------------
@@ -132,13 +132,13 @@ Fd = -k.*(C-Geq.*slpc);
 
 % air injection factor as a function of wind speed
 % set to 0 below u10 = 2.27 m/s
-wfact=(u10-2.27)^3; 
+wfact=(u10-2.27).^3; 
 wfact(wfact<0) = 0;
 
 % calculate dry atmospheric pressure in atm
 patmdry=slp-ph2ov; % pressure of dry air in atm 
 
-ai=gasmolfract(gas).*wfact.*patmdry*atm2Pa/(R*(273.15+T));
+ai=gasmolfract(gas).*wfact.*patmdry.*atm2Pa./(R*(273.15+T));
 Fc = Ac*ai; 
 
 
@@ -150,7 +150,7 @@ Fc = Ac*ai;
 % pressure in atm
 Zbub = 0.15*u10 - 0.55;
 Zbub(Zbub<0)=0; 
-phydro=(gsw_sigma0(S,T)+1000)*9.81*Zbub/atm2Pa; 
+phydro=(gsw_sigma0(S,T)+1000).*9.81.*Zbub./atm2Pa; 
 
 % multiply by scaling factor Ap by beta raised to power betaexp and 
 % diffusivity raised to power diffexp

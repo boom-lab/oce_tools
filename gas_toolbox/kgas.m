@@ -7,7 +7,7 @@
 % -------------------------------------------------------------------------
 % INPUTS:
 % -------------------------------------------------------------------------
-% u10       10-m windspeed (m/s)
+% u10       10-m wind speed (m/s)
 % Sc        Schmidt number 
 % param     abbreviation for parameterization:
 %           W14  = Wanninkhof 2014
