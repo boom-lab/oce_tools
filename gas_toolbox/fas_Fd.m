@@ -1,19 +1,16 @@
 % =========================================================================
-% FAS - wrapper function for calculating air-sea gas transfer using a
-% specific GE parameterization
+% Fas_Fd: calculate diffusive air-sea flux for parameterizations without an
+% explicit bubble flux
 %
-% [Fd, Fc, Fp, Deq, k] = fas(C,u10,S,T,slp,gas,param,rh)
+% [Fd, k] = fas_Fd(C,u10,S,T,slp,gas,param,rh)
 %
 % -------------------------------------------------------------------------
 % USAGE:
 % -------------------------------------------------------------------------
-% [Fd, Fc, Fp, Deq, k] = fas(C,u10,S,T,slp,gas,param,rh)
-% [Fd, Fc, Fp, Deq, k] = fas(0.01410,5,35,10,1,'Ar','N11',0.9)
-%    > Fd = -4.4855e-9
-%    > Fc = 3.1432e-10
-%    > Fp = 9.0969e-11
-%    > Deq = 0.0017
-%    > k = 1.7363e-05
+% [Fd, k] = fas_Fd(C,u10,S,T,slp,gas,param,rh)
+% [Fd, k] = fas_Fd(0.01410,5,35,10,1,'Ar','W14',0.9)
+%    > Fd = -4.1704e-09
+%    > k = 1.6143e-05
 %
 % -------------------------------------------------------------------------
 % INPUTS:
@@ -23,12 +20,15 @@
 % S:        Sea surface salinity (PSS)
 % T:        Sea surface temperature (deg C)
 % slp:      sea level pressure (atm)
-% gas:      code for gas, formatted as a string, e.g., 'O2' 
-% param:    abbreviation for parameterization:
-%               Sw07 = Sweeney et al. 2007
-%               S09 = Stanley et al. 2009
-%               N11 = Nicholson et al. 2011 
-%               L13 = Liang et al. 2013 
+% gas:      name of gas, formatted as a string, e.g. 'Ne'
+% param     abbreviation for parameterization:
+%           W14  = Wanninkhof 2014
+%           W92a = Wanninkhof 1992 - averaged winds
+%           W92b = Wanninkhof 1992 - instantaneous or steady winds
+%           Sw07 = Sweeney et al. 2007
+%           Ho06 = Ho et al. 2006
+%           Ng00 = Nightingale et al. 2000
+%           LM86 = Liss and Merlivat 1986
 % rh:       relative humidity expressed as the fraction of saturation 
 %           (0.5 = 50% RH).
 %           rh is an optional but recommended argument. If not provided, it
@@ -44,16 +44,22 @@
 %       N2      Nitrogen        Hamme and Emerson 2004   
 %       O2      Oxygen          Garcia and Gordon 1992   
 %
+% Fd = -k.*(C-slpc.*Geq)
+%
+% Explanation of slpc:
+%      slpc = (observed dry air pressure)/(reference dry air pressure)
+% slpc is a pressure correction factor to convert from reference to
+% observed conditions. Equilibrium gas concentration in gasmoleq is
+% referenced to 1 atm total air pressure, including saturated water vapor
+% (RH=1), but observed sea level pressure is usually different from 1 atm,
+% and humidity in the marine boundary layer is usually less than
+% saturation. Thus, the observed sea level pressure of each gas will
+% usually be different from the reference.
 % -------------------------------------------------------------------------
 % OUTPUTS:
 % -------------------------------------------------------------------------
-% Fd    Diffusive flux                                (mol m-2 s-1)
-% Fc:   Flux from fully collapsing small bubbles      (mol m-2 s-1)
-% Fp:   Flux from partially collapsing large bubbles  (mol m-2 s-1)
-% Deq:  Equilibrium supersaturation                   (unitless (%sat/100))
-% k:    Diffusive gas transfer velocity               (m s-1)
-%
-% Note: Total air-sea flux is Ft = Fd + Fc + Fp
+% Fd        Diffusive flux                                (mol m-2 s-1)
+% k:        Diffusive gas transfer velocity               (m s-1)
 %
 % -------------------------------------------------------------------------
 % AUTHOR:
@@ -78,7 +84,7 @@
 %
 % =========================================================================
 
-function [Fd, Fc, Fp, Deq,k] = fas(C,u10,S,T,slp,gas,param,rh)
+function [Fd, k] = fas_Fd(C,u10,S,T,slp,gas,param,rh)
 
 % if humidity is not provided, set to 0.8 for all values
 if nargin == 8
@@ -88,20 +94,24 @@ if nargin == 8
 else
     rh =0.8.*ones(size(C));
 end
-    
 
+% slpc = (observed dry air pressure)/(reference dry air pressure)
+% see Description section in header
+ph2oveq = vpress(S,T);
+ph2ov = rh.*ph2oveq;
+slpc = (slp-ph2ov)./(1-ph2oveq);
+slpd = slp-ph2ov;
+
+[D,Sc] = gasmoldiff(S,T,gas);
+Geq = gasmoleq(S,T,gas);
+    
 switch upper(param)
-    case 'S09'
-        [Fd, Fc, Fp, Deq, k] = fas_S09(C,u10,S,T,slp,gas,rh);
-    case 'N11'
-        [Fd, Fc, Fp, Deq, k] = fas_N11(C,u10,S,T,slp,gas,rh);
-    case 'SW07'
-        [Fd, Fc, Fp, Deq, k] = fas_Sw07(C,u10,S,T,slp,gas,rh);
-    case 'L13'
-        [Fd, Fp, Fc, Deq, k] = fas_L13(C,u10,S,T,slp,gas,rh);
+    case {'W14','W92A','W92B','SW07','HO06','NG00','LM86'}
+        k = kgas(u10,Sc,param);
     otherwise
-        error('Only S09, N11, Sw07 and L13 are supported. See fas_Fd for more parameterizations.');
+        error('Only W14, W92a, W92b, Sw07, Ho06, Ng00 and LM86 are supported.');
 end
 
+Fd = -k.*(C-slpc.*Geq);
 
 end

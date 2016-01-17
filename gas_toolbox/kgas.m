@@ -26,8 +26,8 @@
 % -------------------------------------------------------------------------
 % USAGE:
 % -------------------------------------------------------------------------
-% k = kgas(10,1000,'W92b')
-% k = 6.9957e-05
+% k = kgas(10,1000,'W14')
+% k = 5.6643e-05
 %
 % -------------------------------------------------------------------------
 % REFERENCES:
@@ -35,8 +35,8 @@
 % Wanninkhof, R. (2014). Relationship between wind speed and gas exchange
 % over the ocean revisited. Limnol. Oceanogr. Methods, 12(6), 351-362.
 %
-% Wanninkhof, R. (1992). Relationship between wind speed and gas exchange.
-% J. Geophys. Res, 97(25), 7373-7382.
+% Wanninkhof, R. (1992). Relationship between wind speed and gas exchange
+% over the ocean. J. Geophys. Res, 97(25), 7373-7382.
 %
 % Sweeney, C., Gloor, E., Jacobson, A. R., Key, R. M., McKinley, G.,
 % Sarmiento, J. L., & Wanninkhof, R. (2007). Constraining global air-sea
@@ -85,39 +85,42 @@
 
 function [kv] = kgas(u10,Sc,param)
 
-quadratics = {'W92a','W92b','Sw07','Ho06'};
+quadratics = {'W14','W92a','W92b','Sw07','Ho06'};
 % should be case insensitive
-if ismember(upper(param),upper(quadratics))
-    if strcmpi(param,'W92a')
-        A = 0.39;
-    elseif strcmpi(param,'W92b')
-        A = 0.31;
-    elseif strcmpi(param,'Sw07')
-        A = 0.27;
-    elseif strcmpi(param,'Ho06')
-        A = 0.254; %k_600 = 0.266
+    if ismember(upper(param),upper(quadratics))
+        if strcmpi(param,'W14')
+            A = 0.251;
+        elseif strcmpi(param,'W92a')
+            A = 0.39;
+        elseif strcmpi(param,'W92b')
+            A = 0.31;
+        elseif strcmpi(param,'Sw07')
+            A = 0.27;
+        elseif strcmpi(param,'Ho06')
+            A = 0.254; %k_600 = 0.266
+        end
+        k_cm = A*u10.^2.*(Sc./660).^-0.5; %cm/h
+        kv = k_cm./(100*60*60); %m/s
+    elseif strcmpi(param,'Ng00')
+        k600 = 0.222.*u10.^2 + 0.333.*u10;
+        k_cm = k600.*(Sc./600).^-0.5; % cm/h
+        kv = k_cm./(100*60*60); % m/s
+    elseif strcmpi(param,'LM86')
+        k600 = zeros(1,length(u10));   
+
+        l = find(u10 <= 3.6);
+        k600(l) = 0.17.*u10(l);
+
+        m = find(u10 > 3.6 & u10 <= 13);
+        k600(m) = 2.85.*u10(m)-9.65;
+
+        h = find(u10 > 13);
+        k600(h) = 5.9.*u10(h)-49.3;
+
+        k_cm = k600.*(Sc./600).^-0.5;
+        k_cm(l) = k600(l).*(Sc./600).^(-2/3);
+        kv = k_cm./(100*60*60); % m/s
     else
-        error('parameterization not found');
-    end
-    k_cm = A*u10.^2.*(Sc./660).^-0.5; %cm/h
-    kv = k_cm./(100*60*60); %m/s
-elseif strcmpi(param,'Ng00')
-    k600 = 0.222.*u10.^2 + 0.333.*u10;
-    k_cm = k600.*(Sc./600).^-0.5; % cm/h
-    kv = k_cm./(100*60*60); % m/s
-elseif strcmpi(param,'LM86')
-    k600 = zeros(1,length(u10));   
-    
-    l = find(u10 <= 3.6);
-    k600(l) = 0.17.*u10(l);
-   
-    m = find(u10 > 3.6 & u10 <= 13);
-    k600(m) = 2.85.*u10(m)-9.65;
-    
-    h = find(u10 > 13);
-    k600(h) = 5.9.*u10(h)-49.3;
-    
-    k_cm = k600.*(Sc./600).^-0.5;
-    k_cm(l) = k600(l).*(Sc./600).^(-2/3);
-    kv = k_cm./(100*60*60); % m/s
+        error('parameterization not found'); 
+        
 end
