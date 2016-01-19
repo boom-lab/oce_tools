@@ -9,9 +9,10 @@
 % details.
 %
 % This function uses the GSW Toolbox solubility functions when available,
-% except for Ne. There is a bug in gsw_Nesol_SP_pt and gsw_Nesol version
-% 3.05 (they return solubility in nmol kg-1 instead of umol kg-1), so we
-% have provided a correct function for the solubility of Ne.
+% except for Ne. There was a bug in gsw_Nesol_SP_pt and gsw_Nesol, in
+% versions downloaded prior to Sept 23, 2015. Therefore, we provide a
+% correct solubility function to avoid errors for people with older
+% versions of the GSW Toolbox.
 %
 % -------------------------------------------------------------------------
 % USAGE:
@@ -60,6 +61,11 @@
 
 function [sol] = gasmoleq(SP,pt,gas)
 
+% Check for GSW solubility functions
+if exist('gsw_Arsol_SP_pt','file') == 0
+    error('gsw_Arsol_SP_pt not in MATLAB path. Download GSW Toolbox at http://www.teos-10.org/');
+end;
+
 % Calculate potential density at surface
 SA = SP.*35.16504./35;
 CT = gsw_CT_from_pt(SA,pt);
@@ -69,7 +75,8 @@ rho = gsw_sigma0(SA,CT)+1000;
 if strcmpi(gas, 'He')
     sol_umolkg = gsw_Hesol_SP_pt(SP,pt);
 elseif strcmpi(gas, 'Ne')
-    % bug in gsw_Nesol... v. 3.05 - returns nmol kg-1 instead of umol kg-1
+    % bug in gsw_Nesol... v. 3.05 prior Sept 23, 2015 
+    % the bug returned solubility in nmol kg-1 instead of umol kg-1
     sol_umolkg = Nesol(SP,pt);
 elseif strcmpi(gas, 'Ar')
     sol_umolkg = gsw_Arsol_SP_pt(SP,pt);
