@@ -1,6 +1,6 @@
 % [Fd, Fc, Fp, Deq, k] = fas_Sw07(C,u10,S,T,slp,gas,rh)
 % Function to calculate air-sea gas exchange flux using Sweeney 07
-% parameterization (k_660 = 0.27 cm/hr)
+% parameterization (A = 0.27 cm/hr)
 %
 % USAGE:-------------------------------------------------------------------  
 % [Fd, Fc, Fp, Deq, k] = fas_Sw07(C,u10,S,T,slp,gas,rh)
@@ -58,17 +58,9 @@
 %
 % Copyright 2015 Cara Manning 
 %
-% Licensed under the Apache License, Version 2.0 (the "License");
-% you may not use this file except in compliance with the License.
-% You may obtain a copy of the License at
-%
-%    http://www.apache.org/licenses/LICENSE-2.0
-%
-% Unless required by applicable law or agreed to in writing, software
-% distributed under the License is distributed on an "AS IS" BASIS,
-% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-% See the License for the specific language governing permissions and
-% limitations under the License.
+% Licensed under the Apache License, Version 2.0 (the "License"); you may 
+% not use this file except in compliance with the License, which is
+% available at http://www.apache.org/licenses/LICENSE-2.0
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -99,7 +91,7 @@ Geq = gasmoleq(S,T,gas);
 k = kgas(u10,Sc,'Sw07');
 Fd = -k.*(C-Geq.*slpc);
 
-% Set Finj, Fex to 0. They are included to be consistent with the other
+% Set Fc and Fp to 0. They are included to be consistent with the other
 % fas_ functions.
 Fc = zeros(size(Fd));
 Fp = zeros(size(Fd));

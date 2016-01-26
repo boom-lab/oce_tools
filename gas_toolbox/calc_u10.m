@@ -24,7 +24,7 @@
 %
 % Hsu S, Meindl E A and Gilhousen D B (1994) Determining the Power-Law
 %    Wind-Profile Exponent under Near-Neutral Stability Conditions at Sea 
-%    J. Appl. Meteor. 33 757?765
+%    J. Appl. Meteor. 33 757-765
 %
 % AUTHOR:---------------------------------------------------------------
 % Cara Manning cmanning@whoi.edu

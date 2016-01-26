@@ -1,6 +1,5 @@
-function [D, Sc] = gasmoldiff(S,T,gas)
-
-% gasmoldiff   Diffusion coeff and schmidt number for gases in fresh/sea water
+% [D, Sc] = gasmoldiff(S,T,gas)
+% Diffusion coeff and Schmidt number for gases in fresh/sea water
 %=========================================================================
 % Modified from gas_diffusion Version 2.0 16 July 2013
 %          Author: Roberta C. Hamme (University of Victoria)
@@ -63,6 +62,9 @@ function [D, Sc] = gasmoldiff(S,T,gas)
 % DISCLAIMER:
 %    This software is provided "as is" without warranty of any kind.  
 %=========================================================================
+
+function [D, Sc] = gasmoldiff(S,T,gas)
+
 R = 8.314510;
 
 if strcmpi(gas, 'He')
@@ -82,7 +84,7 @@ elseif strcmpi(gas, 'Xe')
 elseif strcmpi(gas, 'N2')
     [AEa] = [3.4120e-6 18500];
 elseif strcmpi(gas, 'CO2')
-    % co2 schmidt# formula from Wanninkopf (1992)
+    % CO2 schmidt# formula from Wanninkhof (1992)
     Sc = 2073.1 - 125.62.*T + 3.6276.*T.^2 - 0.043219.*T.^3;
     D = sw_visc(S,T,0)./Sc;
     return

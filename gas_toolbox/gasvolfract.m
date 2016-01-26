@@ -1,9 +1,12 @@
 % =========================================================================
-% gasmolvol
+% [pGdry] = gasvolfract(gas,varargin)
 % -------------------------------------------------------------------------
 % volume ratio in dry atmosphere of a well mixed atmospheric gas
 % 
-% Noble gases (excluding Ar) from Glueckauf 1951
+% Noble gases (excluding Ar) from:
+% Glueckauf, E. (1951) The composition of atmospheric air
+% T.F. Malone (Ed.), Compendium of Meteorology, Amer. Meteorological Soc,
+% Boston (1951), pp. 3?11
 %
 % N2, Ar, O2 are from Table 1 in:
 % Picard, A., Davis, R. S., Gläser, M., & Fujii, K. (2008). Revised formula 

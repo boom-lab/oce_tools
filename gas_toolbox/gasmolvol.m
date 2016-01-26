@@ -13,7 +13,6 @@
 % and Functional Relationships in Science and Technology New Series Group
 % IV. Physical Chemistry Vol, 21.
 %
-%
 % AUTHOR:------------------------------------------------------------------
 % David Nicholson dnicholson@whoi.edu
 % Woods Hole Oceanographic Institution

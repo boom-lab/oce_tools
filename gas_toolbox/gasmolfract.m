@@ -1,5 +1,6 @@
 % =========================================================================
 % gasmolfract
+% X = gasmolfract(gas)
 % -------------------------------------------------------------------------
 % mole fraction in dry atmosphere of a well mixed atmospheric gas
 % 
