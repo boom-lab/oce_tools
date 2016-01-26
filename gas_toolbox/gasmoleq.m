@@ -62,9 +62,10 @@
 function [sol] = gasmoleq(SP,pt,gas)
 
 % Check for GSW solubility functions
-if exist('gsw_Arsol_SP_pt','file') == 0
-    error('gsw_Arsol_SP_pt not in MATLAB path. Download GSW Toolbox at http://www.teos-10.org/');
-end;
+% Commented out to speed up performance
+% if exist('gsw_Arsol_SP_pt','file') == 0
+%     error('gsw_Arsol_SP_pt not in MATLAB path. Download GSW Toolbox at http://www.teos-10.org/');
+% end;
 
 % Calculate potential density at surface
 SA = SP.*35.16504./35;

@@ -4,7 +4,7 @@
 % volume ratio in dry atmosphere of a well mixed atmospheric gas
 % 
 % Noble gases (excluding Ar) from:
-% Glueckauf, E. (1951) The composition of atmospheric air
+% Glueckauf, E. (1951) The composition of atmospheric air.
 % T.F. Malone (Ed.), Compendium of Meteorology, Amer. Meteorological Soc,
 % Boston (1951), pp. 3?11
 %
