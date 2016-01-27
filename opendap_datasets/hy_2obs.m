@@ -76,7 +76,6 @@ zrng = [floor(min(z)) ceil(max(z))];
 
 [slab,latHy,lonHy,zHy,tHy] = hy_slab(latrng,lonrng,zrng,trng,var);
 
-
 %% Initialize output and get nearest datapoint to each obs point
 NV = nan(nobs,1);
 outvar = NV;
@@ -88,12 +87,17 @@ for ii = 1:nobs
     [~,ilat] = min(abs(lat(ii) - latHy));
     [~,ilon] = min(abs(lon(ii) - lonHy));
     [~,it] = min(abs(tHy-dtm(ii)));
-    [~,iz] = min(abs(zHy-z(ii)));
-    outvar(ii) = slab(ilat,ilon,it,iz);
+    if ndims(slab) == 4
+        [~,iz] = min(abs(zHy-z(ii)));
+        outvar(ii) = slab(ilat,ilon,iz,it);
+        zout(ii) = zHy(iz);
+    else
+        outvar(ii) = slab(ilat,ilon,it);
+        zout(ii) = NaN;
+    end
     latout(ii) = latHy(ilat);
     lonout(ii) = lonHy(ilon);
-    tout(ii) = tHy(it);
-    zout(ii) = zHy(iz);
+    tout(ii) = tHy(it);   
 end
 
 

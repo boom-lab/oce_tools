@@ -7,7 +7,7 @@ function [ slab,lat,lon,t] = av_slab(latRng,lonRng,tRng,varName,varargin)
 % -------------------------------------------------------------------------
 % USAGE:
 % -------------------------------------------------------------------------
-% [ssh, lath, lonh] = av_slab(latrng,lonrng,NaN,[t,t],'surf_el');
+% [ssh, lath, lonh] = av_slab(latrng,lonrng,NaN,[t,t],'sla');
 %
 % -------------------------------------------------------------------------
 % INPUTS:

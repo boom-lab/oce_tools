@@ -71,9 +71,10 @@ for ii = 1:nobs
     [~,ilon] = min(abs(lon(ii) - lonv));
     fname{ii} = oc_url(t(ii),var,varargin{:});
     try
-        if ~strcmpi(fname{ii},lastFname)
-            v = ncread(fname{ii},var,[ilon,ilat],[1,1]);
-        end
+%         if ~strcmpi(fname{ii},lastFname)
+%             v = ncread(fname{ii},var,[ilon,ilat],[1,1]);
+%         end
+        v = ncread(fname{ii},var,[ilon,ilat],[1,1]);
         outvar(ii) = v;
     catch
         disp(['error accessing' fname{ii}]);
@@ -81,7 +82,7 @@ for ii = 1:nobs
         continue
     end
     latout(ii) = latv(ilat);
-    lonout(ii) = latv(ilon);
+    lonout(ii) = lonv(ilon);
     lastFname = fname{ii};
 end
 

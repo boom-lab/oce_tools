@@ -67,6 +67,9 @@ hylat = ncread(url1,'lat');
 
 % get requested lat range
 ilat = find(hylat >= latRng(1) & hylat <= latRng(2));
+if isempty(ilat);
+    [~,ilat] = min(abs(hylat  - mean(latRng)));
+end
 nlat = length(ilat);
 lat = hylat(ilat);
 
@@ -74,6 +77,9 @@ lat = hylat(ilat);
 if ~isSSH
     hyz = ncread(url1,'depth');
     iz = find(hyz >= zRng(1) & hyz <= zRng(2));
+    if isempty(iz);
+        [~,iz] = min(abs(hyz  - mean(zRng)));
+    end
     nz = length(iz);
     z = hyz(iz);
 else
@@ -122,6 +128,9 @@ if lonRng(1) > lonRng(2)
 else
     isLonSplit = 0;
     ilon = find(hylon >= lonRng(1) & hylon <= lonRng(2));
+    if isempty(ilon);
+        [~,ilon] = min(abs(hylon  - mean(lonRng)));
+    end
     lon = hylon(ilon);   
 end
 nlon = length(lon);
