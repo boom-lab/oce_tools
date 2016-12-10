@@ -96,9 +96,12 @@ if lonRng(1) > lonRng(2)
 else
     isLonSplit = 0;
     ilon = find(nrlon >= lonRng(1) & nrlon <= lonRng(2));
+    if isempty(ilon)
+        [~,ilon] = min(abs(mean(lonRng)-nrlon));
+    end
     ilon = [min(ilon)-1; ilon; max(ilon)+1]; % Add points just outside the extremes
     ilon(ilon<1 | ilon>length(nrlon)) = [];
-    lon = nrlon(ilon);   
+    lon = nrlon(ilon);
 end
 nlon = length(lon);
 

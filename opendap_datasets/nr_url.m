@@ -72,7 +72,7 @@ switch subdir
         append = '.tropp.';
     otherwise
         error(['invalid sub directory: ' subdir '. must be one of: '...
-            'surface','surface_gauss','other_gauss','tropopause','pressure,']);
+            'surface ','surface_gauss ','other_gauss ','tropopause ','pressure']);
 
 end
 
