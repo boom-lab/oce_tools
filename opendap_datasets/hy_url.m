@@ -54,14 +54,16 @@ elseif dtm(1) < datetime(2013,08,01)
     expt = 'expt_90.9';
 elseif dtm(1) < datetime(2014,04,07)
     expt = 'expt_91.0';
-else
+elseif dtm(1) < datetime(2016,04,18)
     expt = 'expt_91.1';
+else
+    expt = 'expt_91.2';
     switch varName
         case 'surf_el'
             suite = 'ssh';
-        case {'water_u','water_v'};
+        case {'water_u','water_v'}
             suite = 'uv3z';
-        case {'water_temp','salinity'};
+        case {'water_temp','salinity'}
             suite = 'ts3z';
         otherwise
             error('invalid variable name');

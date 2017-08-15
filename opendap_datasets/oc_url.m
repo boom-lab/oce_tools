@@ -33,7 +33,7 @@ function [ fname ] = oc_url(t,var,varargin)
 % ABOUT:  David Nicholson // dnicholson@whoi.edu // 29 JUN 2015
 % -------------------------------------------------------------------------
 
-froot = 'http://oceandata.sci.gsfc.nasa.gov/opendap';
+froot = 'https://oceandata.sci.gsfc.nasa.gov:443/opendap';
 %% parse inputs
 defaultLevel = 'L3SMI';
 expectedLevel = {'L3SMI'};
