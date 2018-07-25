@@ -1,4 +1,4 @@
-function [ slab,lat,lon,z,t] = hy_slab(latRng,lonRng,zRng,tRng,varName)
+function [ slab,lat,lon,z,t] = hy_slab(latRng,lonRng,zRng,tRng,varName,varargin)
 
 % hy_url
 % -------------------------------------------------------------------------
@@ -32,15 +32,17 @@ function [ slab,lat,lon,z,t] = hy_slab(latRng,lonRng,zRng,tRng,varName)
 p = inputParser;
 
 expectedVarName = {'surf_el','water_u','water_v','water_temp','salinity'};
-
+defaultGrid = 'GLBu0.08';
+expectedGrid = {'GLBu0.08','GLBv0.08'};
 
 addRequired(p,'lonRng',@(x) isnumeric(x) & length(x) == 2);
 addRequired(p,'latRng',@(x) isnumeric(x) & length(x) == 2);
 addRequired(p,'zRng',@isnumeric);
 addRequired(p,'tRng',@(x) (isnumeric(x) || isdatetime(x)) & length(x) == 2);
 addRequired(p,'varName',@(x) any(validatestring(x,expectedVarName)));
+addParameter(p,'grid',defaultGrid,@(x) any(validatestring(x,expectedGrid)));
 
-parse(p,lonRng,latRng,zRng,tRng,varName);
+parse(p,lonRng,latRng,zRng,tRng,varName,varargin{:});
 inputs = p.Results;
 
 % validated inputs
@@ -49,6 +51,7 @@ latRng = inputs.latRng;
 zRng = inputs.zRng;
 tRng = inputs.tRng;
 varName = inputs.varName;
+grid = inputs.grid;
 
 isSSH = strcmpi(varName,'surf_el');
 
@@ -58,8 +61,8 @@ end
 tRng = dateshift(tRng,'start','second','nearest');
 
 % read url for start and end times
-url1 = hy_url(tRng(1),varName);
-url2 = hy_url(tRng(2),varName);
+url1 = hy_url(tRng(1),varName,'grid',grid);
+url2 = hy_url(tRng(2),varName,'grid',grid);
 
 hylon = ncread(url1,'lon');
 hylat = ncread(url1,'lat');
@@ -67,7 +70,7 @@ hylat = ncread(url1,'lat');
 
 % get requested lat range
 ilat = find(hylat >= latRng(1) & hylat <= latRng(2));
-if isempty(ilat);
+if isempty(ilat)
     [~,ilat] = min(abs(hylat  - mean(latRng)));
 end
 nlat = length(ilat);
@@ -77,7 +80,7 @@ lat = hylat(ilat);
 if ~isSSH
     hyz = ncread(url1,'depth');
     iz = find(hyz >= zRng(1) & hyz <= zRng(2));
-    if isempty(iz);
+    if isempty(iz)
         [~,iz] = min(abs(hyz  - mean(zRng)));
     end
     nz = length(iz);

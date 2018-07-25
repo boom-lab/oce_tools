@@ -30,7 +30,7 @@ expectedDT = {'dt','nrt'};
 defaultSat = 'allsat';
 expectedSat = {'allsat','twosat'};
 
-validVar = {'msla','sla','madt','u','v','uv','uwind','vwind','mwind','mswh'};
+validVar = {'msla','sla','madt','u','v','uv','uwind','vwind','mwind','mswh','fsle_max','theta_max'};
 
 
 %%% parse input parameters
@@ -71,6 +71,8 @@ switch varn
         duacsStr = [];
     case {'msla','sla'}
         varstr = 'msla-h';
+    case {'fsle_max','theta_max'}
+        varstr = 'madt-fsle';
 end
 
 if strcmpi(dt,'nrt') && ismember(varn,{'sla','msla','madt'})
@@ -87,7 +89,7 @@ url = ['http://' uname ':' pswd '@' threddsroot '-' duacsStr dt '-' areaStr '-' 
 % http://opendap.aviso.altimetry.fr/thredds/dodsC/dataset-duacs-dt-global-allsat-madt-uv
 % http://opendap.aviso.altimetry.fr/thredds/dodsC/dataset-duacs-dt-global-twosat-madt-h
 % http://opendap.aviso.oceanobs.com/thredds/dodsC/dataset-duacs-dt-global-allsat-msla-uv
-
+% http://opendap.aviso.oceanobs.com/thredds/dodsC/dataset-duacs-dt-global-allsat-madt-fsle
 
 
 

@@ -111,7 +111,7 @@ end
 
 % append NPP prefix to VIIRS file path
 if strcmpi(sensor,'VIIRS')
-    suite = ['NPP_' suite];
+    suite = ['SNPP_' suite];
 end
 
 % time in datetime - dateshift ensures there are not artifacts from

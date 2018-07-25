@@ -33,8 +33,8 @@ function [ slab,lat,lon,t] = av_slab(latRng,lonRng,tRng,varName,varargin)
 %%% parse input parameters
 p = inputParser;
 
-expectedVarName = {'sla','madt','u','v','uv','uwind','vwind','mwind','mswh'};
-defaultDT = 'nrt';
+expectedVarName = {'sla','madt','u','v','uv','uwind','vwind','mwind','mswh','fsle_max','theta_max'};
+defaultDT = 'dt';
 expectedDT = {'dt','nrt'};
 
 addRequired(p,'latRng',@(x) isnumeric(x) & length(x) == 2);
